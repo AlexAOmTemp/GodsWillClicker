@@ -1,0 +1,1 @@
+{"skeleton":{"hash":"MGO7lzJUMF8","spine":"4.1.21","x":-68,"y":-116.7,"width":128,"height":256},"bones":[{"name":"root"}],"slots":[{"name":"GroundExternal","bone":"root","attachment":"GroundExternal"}],"skins":[{"name":"default","attachments":{"GroundExternal":{"GroundExternal":{"x":-4,"y":11.3,"width":128,"height":256}}}}],"animations":{"animation":{}}}

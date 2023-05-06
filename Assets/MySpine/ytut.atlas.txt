@@ -1,0 +1,8 @@
+ytut.png
+size:1024,1024
+filter:Linear,Linear
+pma:true
+GroundExternal
+bounds:1,1,128,256
+kandinsky-download-1682890214644
+bounds:1,258,563,541
