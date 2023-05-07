@@ -1,6 +1,5 @@
 
 using UnityEngine;
-
 public class CombatSystem : MonoBehaviour
 {
     [SerializeField] private CombatSystem _enemy;
