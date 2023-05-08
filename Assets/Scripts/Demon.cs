@@ -11,10 +11,10 @@ public class Demon : MonoBehaviour
         _combat = this.GetComponent<CombatSystem>();
         _combat.AvailabilityIsChanged+= onAvailabilityChanged;
     }
-    public void Init(DemonParts parts, Counters availabilityCounters, ActiveEffects effects)
+    public void Init(Stats stats, DemonParts parts, Counters availabilityCounters, ActiveEffects effects)
     {
-        _clickDelay = effects.ClickDelay;
-        _combat.Init( parts, availabilityCounters, effects);
+        _clickDelay = stats.ClickDelay;
+        _combat.Init( stats, parts, availabilityCounters, effects);
     }
     public void Update()
     {

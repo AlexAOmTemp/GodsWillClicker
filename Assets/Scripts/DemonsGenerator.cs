@@ -5,20 +5,22 @@ using UnityEngine;
 public class DemonsGenerator : MonoBehaviour
 {
     [SerializeField] private Demon _demon;
-    private DemonParts GeneratedDemonParts = new DemonParts();
-    private Counters GeneratedCounters = new Counters();
-    private ActiveEffects GeneratedEffects = new ActiveEffects();
+    private Stats _stats = new Stats();
+    private DemonParts _demonParts = new DemonParts();
+    private Counters _availabilityCounters = new Counters();
+    private ActiveEffects _effects = new ActiveEffects();
     public void GenerateDemon(int stage)
     {
-        GeneratedEffects.ClickDelay = 0.4f;
-        GeneratedEffects.Life = 200 + stage;
-        GeneratedEffects.Damage = 1;
-        GeneratedDemonParts.Blood = 60;
-        GeneratedDemonParts.Armor = 30;
-        GeneratedDemonParts.Weapons = 20;
-        GeneratedDemonParts.Wings = 10;
-        GeneratedDemonParts.Horns = 5;
-        _demon.Init(GeneratedDemonParts, GeneratedCounters, GeneratedEffects);
+        _stats.SetDefault();
+        _stats.ClickDelay = 0.4f;
+        _stats.Life = 250 + stage;
+        _stats.Damage = 10;
+        //_demonParts.Blood = 60;
+        //_demonParts.Armor = 30;
+        //_demonParts.Weapons = 20;
+        //_demonParts.Wings = 10;
+        //_demonParts.Horns = 5;
+        _demon.Init(_stats, _demonParts, _availabilityCounters, _effects);
 
     }
 }
