@@ -7,75 +7,58 @@ public class Animations : MonoBehaviour
 {
     #region Inspector
     // [SpineAnimation] attribute allows an Inspector dropdown of Spine animation names coming form SkeletonAnimation.
-    [SpineAnimation]
-    public string runAnimationName;
+    [Header("Actions")]
+    [SpineAnimation][SerializeField] private string _idleAnimationName;
+    [SpineAnimation][SerializeField] private string _attackAnimationName;
 
-    [SpineAnimation]
-    public string idleAnimationName;
-
-    [SpineAnimation]
-    public string walkAnimationName;
-
-    [SpineAnimation]
-    public string shootAnimationName;
-
-    [Header("Transitions")]
-    [SpineAnimation]
-    public string idleTurnAnimationName;
-
-    [SpineAnimation]
-    public string runToIdleAnimationName;
-
-    public float runWalkDuration = 1.5f;
+    [Header("Buffs")]
+    [SpineAnimation][SerializeField] private string _armorAnimationName;
+    [SpineAnimation][SerializeField] private string _swordAnimationName;
+    [SpineAnimation][SerializeField] private string _wingsAnimationName;
+    [SpineAnimation][SerializeField] private string _nimbusAnimationName;
+    [SpineAnimation][SerializeField] private string _wrathAnimationName;
     #endregion
 
-    SkeletonAnimation skeletonAnimation;
+    #region Private variables
+    private List<string> _animationNames = new List<string>();
+    private SkeletonAnimation _skeletonAnimation;
+    private Spine.AnimationState _spineAnimationState;
+    private Spine.Skeleton _skeleton;
+    #endregion
 
-    // Spine.AnimationState and Spine.Skeleton are not Unity-serialized objects. You will not see them as fields in the inspector.
-    public Spine.AnimationState spineAnimationState;
-    public Spine.Skeleton skeleton;
-
-    void Start()
+    void Awake()
     {
-        // Make sure you get these AnimationState and Skeleton references in Start or Later.
-        // Getting and using them in Awake is not guaranteed by default execution order.
-        skeletonAnimation = GetComponent<SkeletonAnimation>();
-        spineAnimationState = skeletonAnimation.AnimationState;
-        skeleton = skeletonAnimation.Skeleton;
-
-        StartCoroutine(DoDemoRoutine());
+        _skeletonAnimation = this.GetComponent<SkeletonAnimation>();
+        _spineAnimationState = _skeletonAnimation.AnimationState;
+        _skeleton = _skeletonAnimation.Skeleton;
+        collectAnimationNames();
+        _spineAnimationState.AddAnimation(0, _idleAnimationName, true, 0);
     }
-
-    /// This is an infinitely repeating Unity Coroutine. Read the Unity documentation on Coroutines to learn more.
-    IEnumerator DoDemoRoutine()
+    public void Attack()
     {
-        while (true)
+        _spineAnimationState.SetAnimation(0, _attackAnimationName, false);
+        _spineAnimationState.AddAnimation(0, _idleAnimationName, true, 0);
+    }
+    public void ActivateBuff(Buffs buff, bool active)
+    {
+        int n = (int)buff;
+        Debug.Log($"{n} {_animationNames.Count}");
+        
+        if (_animationNames[n - 1] != null)
         {
-            // SetAnimation is the basic way to set an animation.
-            // SetAnimation sets the animation and starts playing it from the beginning.
-            // Common Mistake: If you keep calling it in Update, it will keep showing the first pose of the animation, do don't do that.
-
-            spineAnimationState.SetAnimation(0, walkAnimationName, true);
-            yield return new WaitForSeconds(runWalkDuration);
-
-            spineAnimationState.SetAnimation(0, runAnimationName, true);
-            yield return new WaitForSeconds(runWalkDuration);
-
-            // AddAnimation queues up an animation to play after the previous one ends.
-            spineAnimationState.SetAnimation(0, runToIdleAnimationName, false);
-            spineAnimationState.AddAnimation(0, idleAnimationName, true, 0);
-            yield return new WaitForSeconds(1f);
-
-            skeleton.ScaleX = -1;       // skeleton allows you to flip the skeleton.
-            spineAnimationState.SetAnimation(0, idleTurnAnimationName, false);
-            spineAnimationState.AddAnimation(0, idleAnimationName, true, 0);
-            yield return new WaitForSeconds(0.5f);
-            skeleton.ScaleX = 1;
-            spineAnimationState.SetAnimation(0, idleTurnAnimationName, false);
-            spineAnimationState.AddAnimation(0, idleAnimationName, true, 0);
-            yield return new WaitForSeconds(0.5f);
-
+            if (active == true)
+                _spineAnimationState.SetAnimation(n, _animationNames[n - 1], true);
+            else
+                _spineAnimationState.SetEmptyAnimation(n, 0);
         }
     }
-
+    private void collectAnimationNames()
+    {
+        _animationNames.Clear();
+        _animationNames.Add(_armorAnimationName);
+        _animationNames.Add(_swordAnimationName);
+        _animationNames.Add(_wingsAnimationName);
+        _animationNames.Add(_nimbusAnimationName);
+        _animationNames.Add(_wrathAnimationName);
+    }
 }

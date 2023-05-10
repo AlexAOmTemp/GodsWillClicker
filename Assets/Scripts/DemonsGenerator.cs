@@ -15,11 +15,11 @@ public class DemonsGenerator : MonoBehaviour
         _stats.ClickDelay = 0.4f;
         _stats.Life = 250 + stage;
         _stats.Damage = 10;
-        //_demonParts.Blood = 60;
-        //_demonParts.Armor = 30;
-        //_demonParts.Weapons = 20;
-        //_demonParts.Wings = 10;
-        //_demonParts.Horns = 5;
+        _demonParts.Blood = 60;
+        _demonParts.Armor = 30;
+        _demonParts.Weapons = 20;
+        _demonParts.Wings = 10;
+        _demonParts.Horns = 5;
         _demon.Init(_stats, _demonParts, _availabilityCounters, _effects);
 
     }

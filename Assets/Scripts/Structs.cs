@@ -83,3 +83,12 @@ public struct Stats
         calculateStats();
     }
 }
+    public enum Buffs
+    {
+        Armor = 1,
+        Sword = 2,
+        Wings = 3,
+        Nimbus = 4,
+        Wrath = 5
+    }
+

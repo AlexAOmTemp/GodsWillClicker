@@ -1,6 +1,8 @@
 using UnityEngine;
+using System.Collections.Generic;
 public class CombatSystem : MonoBehaviour
 {
+    [SerializeField] private Animations _animations;
     [SerializeField] private CombatSystem _enemy;
     [SerializeField] private PartsTimers _partsTimers;
     [SerializeField] private GuiController _guiController;
@@ -23,11 +25,13 @@ public class CombatSystem : MonoBehaviour
     public event AvailabilityChanged AvailabilityIsChanged;
 
     #endregion
+    #region Private Variables
     private ActiveEffects _effects = new ActiveEffects();
     private DemonParts _parts = new DemonParts();
     private Stats _stats = new Stats();
     private Counters _counters;
     private Counters _availabilityCounters = new Counters();
+    #endregion
 
     void Awake()
     {
@@ -35,7 +39,7 @@ public class CombatSystem : MonoBehaviour
     }
     public void Init(Stats stats, DemonParts parts, Counters availabilityCounters, ActiveEffects effects)
     {
-        testGetDamage ();
+        testGetDamage();
         _stats = stats;
         _stats.calculateStats();
         _parts = parts;
@@ -45,109 +49,59 @@ public class CombatSystem : MonoBehaviour
         _partsTimers.Init(_parts);
         updateGui();
     }
-    public void OnPunchButtonClick()
+    public void OnButtonClick(int index)
     {
-        _counters.Punch++;
-        punchCounterChanged();
-    }
-    public void OnArmorButtonClick()
-    {
-        _availabilityCounters.Armor -= 1;
-        _counters.Armor += 1;
-        _effects.ArmorLayers += 3;
-        if (_counters.Armor % 10 == 0)
-            _availabilityCounters.Wings += 1;
-        ifSetPlaySound(_armorSound);
-    }
-    public void OnWingButtonClick()
-    {
-        _availabilityCounters.Wings -= 1;
-        _counters.Wings += 1;
-        _effects.WingsHits += 3;
-        if (_counters.Wings % 10 == 0)
-            _availabilityCounters.Swords += 1;
-        ifSetPlaySound(_wingSound);
-    }
-    public void OnSwordButtonClick()
-    {
-        _availabilityCounters.Swords -= 1;
-        _counters.Swords += 1;
-        _effects.WeaponHits += 3;
-        if (_counters.Swords % 10 == 0)
-            _availabilityCounters.Nimbus += 1;
-        ifSetPlaySound(_swordSound);
-    }
-    public void OnNimbusButtonClick()
-    {
-        _availabilityCounters.Nimbus -= 1;
-        _counters.Nimbus += 1;
-        _effects.NimbusHits += 3;
-        if (_counters.Nimbus % 10 == 0)
-            _availabilityCounters.Wrath += 1;
-        ifSetPlaySound(_nimbusSound);
-    }
-    public void OnWrathButtonClick()
-    {
-        _availabilityCounters.Wrath -= 1;
-        _counters.Wrath += 1;
-        _effects.WrathHits += 1;
-        ifSetPlaySound(_wrathSound);
-    }
-    /* private void makePunch(int damage)
-     {
-         int multiple = 1;
-         if (_effects.WrathHits > 0)
-         {
-             multiple += 100;
-             _effects.NimbusHits--;
-         }
-         if (_effects.NimbusHits > 0)
-         {
-             multiple += 10;
-             _effects.NimbusHits--;
-         }
-         if (_effects.WingsHits > 0)
-         {
-             multiple += 3;
-             _effects.WingsHits--;
-         }
-         if (_effects.WeaponHits > 0)
-         {
-             multiple += 5;
-             _effects.WeaponHits--;
-         }
-         _enemy.GetDamage(damage * multiple);
-     }*/
-    private void makePunch()
-    {
-        bool isCrit = false;
-        int damage = _stats.Damage;
-        int swordDamage = 0;
-        if (_effects.WeaponHits > 0)
+        switch (index)
         {
-            _effects.WeaponHits--;
-            swordDamage = _stats.WeaponDamage;
+            case 0:
+                // chanse to click punch button extra times. 
+                //Every 100% makes 1 warranty extra click
+                //For example 125% = double click and 25% chance for triple click
+                int times = 1;
+                if (_stats.ExtraFillingChance > 0)
+                {
+                    int add = _stats.ExtraFillingChance % 100;
+                    times += _stats.ExtraFillingChance / 100;
+                    if (checkProc((float)add) == true)
+                        times++;
+                }
+                for (int i = 0; i < times; i++)
+                    onPunchButtonClick();
+                break;
+            case 1:
+                onArmorButtonClick();
+                break;
+            case 2:
+                onWingButtonClick();
+                break;
+            case 3:
+                onSwordButtonClick();
+                break;
+            case 4:
+                onNimbusButtonClick();
+                break;
+            case 5:
+                OnWrathButtonClick();
+                break;
+            default:
+                Debug.LogError($"OnButtonClick wrong index {index}");
+                break;
         }
-        if (_effects.NimbusHits > 0)
-        {
-            if (checkProc(_stats.CriticalChance) == true)
-            {
-               _effects.NimbusHits-=1;
-               damage=(int) (damage*_stats.CriticalDamage/100); 
-               swordDamage= (int) (swordDamage*_stats.CriticalDamage/100);
-               isCrit=true;
-            }
-        }
-        _enemy.GetDamage( damage, isCrit, swordDamage);
+        AvailabilityIsChanged?.Invoke(_availabilityCounters);
+        updateGui();
     }
-
     public void GetDamage(int damage, bool isCrit, int swordDamage)
     {
+        bool wingHit = false;
+        bool armorHit = false;
         if (_effects.WingsHits > 0)
         {
+            wingHit = true;
             if (checkProc(_stats.EvasonChance) == true)
             {
-                _effects.WingsHits -= 1;
+                _effects.WingsHits--;
+                if (_effects.WingsHits == 0)
+                    _animations.ActivateBuff(Buffs.Wings, false);
 
                 if (isCrit == true) //crit makes half of damage if evason is sucsessed
                     damage /= 2;
@@ -161,8 +115,12 @@ public class CombatSystem : MonoBehaviour
         }
         if (_effects.ArmorLayers > 0)
         {
+            armorHit = true;
             _effects.ArmorLayers--;
+            if (_effects.ArmorLayers == 0)
+                _animations.ActivateBuff(Buffs.Armor, false);
 
+            //sword makes double damage to armor
             int armorAfterSword = _stats.ArmorValue - swordDamage * 2;
             if (armorAfterSword >= 0)
                 damage -= armorAfterSword;
@@ -178,40 +136,136 @@ public class CombatSystem : MonoBehaviour
         }
         _stats.Life -= damage;
         ifSetPlaySound(_receiveFleshDamageSound);
+        if (checkProc(_enemy.GetDropChance()))
+            _enemy.AddPart(generatePart(wingHit, armorHit));
         if (_stats.Life <= 0)
             IsDead?.Invoke();
         updateGui();
     }
-    /*public void GetDamage(int damage)
-    {
-        if (_effects.ArmorLayers > damage)
-        {
-            _effects.ArmorLayers -= damage;
-            if (_receiveArmorDamageSound != null)
-                _receiveArmorDamageSound.Play();
-        }
-        else
-        {
-            damage -= _effects.ArmorLayers;
-            _effects.ArmorLayers = 0;
-            _stats.Life -= damage;
-            if (_receiveFleshDamageSound != null)
-                _receiveFleshDamageSound.Play();
-            if (_stats.Life <= 0)
-                IsDead?.Invoke();
-        }
-        updateGui();
-    }*/
-    private void addPart(Parts part)
+    public void AddPart(Parts part)
     {
         switch (part)
         {
-            //case Parts.Blood:
-              //  _parts;
+            case Parts.Blood:
+                _parts.Blood++;
+                break;
+            case Parts.Armor:
+                _parts.Armor++;
+                break;
+            case Parts.Weapons:
+                _parts.Weapons++;
+                break;
+            case Parts.Wings:
+                _parts.Wings++;
+                break;
+            case Parts.Horns:
+                _parts.Horns++;
+                break;
         }
-
+        _partsTimers.PartsCounterUpdated(_parts);
+    }
+    public float GetDropChance()
+    {
+        return _stats.DropChance;
+    }
+    private void onPunchButtonClick()
+    {
+        _counters.Punch++;
+        punchCounterChanged();
+    }
+    private void onArmorButtonClick()
+    {
+        _availabilityCounters.Armor -= 1;
+        _counters.Armor += 1;
+        _effects.ArmorLayers += 3;
+        if (_counters.Armor % 10 == 0)
+            _availabilityCounters.Swords += 1;
+        _animations.ActivateBuff(Buffs.Armor, true);
+        ifSetPlaySound(_armorSound);
+    }
+    private void onSwordButtonClick()
+    {
+        _availabilityCounters.Swords -= 1;
+        _counters.Swords += 1;
+        _effects.WeaponHits += 3;
+        if (_counters.Swords % 10 == 0)
+            _availabilityCounters.Wings += 1;
+        _animations.ActivateBuff(Buffs.Sword, true);
+        ifSetPlaySound(_swordSound);
+    }
+    private void onWingButtonClick()
+    {
+        _availabilityCounters.Wings -= 1;
+        _counters.Wings += 1;
+        _effects.WingsHits += 3;
+        if (_counters.Wings % 10 == 0)
+            _availabilityCounters.Nimbus += 1;
+        _animations.ActivateBuff(Buffs.Wings, true);
+        ifSetPlaySound(_wingSound);
+    }
+    private void onNimbusButtonClick()
+    {
+        _availabilityCounters.Nimbus -= 1;
+        _counters.Nimbus += 1;
+        _effects.NimbusHits += 3;
+        if (_counters.Nimbus % 10 == 0)
+            _availabilityCounters.Wrath += 1;
+        _animations.ActivateBuff(Buffs.Nimbus, true);
+        ifSetPlaySound(_nimbusSound);
+    }
+    private void OnWrathButtonClick()
+    {
+        _availabilityCounters.Wrath -= 1;
+        _counters.Wrath += 1;
+        _effects.WrathHits += 1;
+        _animations.ActivateBuff(Buffs.Wrath, true);
+        ifSetPlaySound(_wrathSound);
     }
 
+    private void makePunch()
+    {
+        _animations.Attack();
+        bool isCrit = false;
+        int damage = _stats.Damage;
+        int swordDamage = 0;
+        if (_effects.WeaponHits > 0)
+        {
+            _effects.WeaponHits--;
+            if (_effects.WeaponHits == 0)
+                _animations.ActivateBuff(Buffs.Sword, false);
+            swordDamage = _stats.WeaponDamage;
+        }
+        if (_effects.NimbusHits > 0)
+        {
+            if (checkProc(_stats.CriticalChance) == true)
+            {
+                _effects.NimbusHits--;
+                if (_effects.NimbusHits == 0)
+                    _animations.ActivateBuff(Buffs.Nimbus, false);
+
+                damage = (int)(damage * _stats.CriticalDamage / 100);
+                swordDamage = (int)(swordDamage * _stats.CriticalDamage / 100);
+                isCrit = true;
+            }
+        }
+        _enemy.GetDamage(damage, isCrit, swordDamage);
+    }
+    private Parts generatePart(bool wing, bool armor)
+    {
+        List<Parts> random = new List<Parts>();
+
+        if (wing == true)
+            random.Add(Parts.Wings);
+        if (_effects.NimbusHits > 0)
+            random.Add(Parts.Horns);
+        if (_effects.WeaponHits > 0)
+            random.Add(Parts.Weapons);
+        if (armor == true)
+            random.Add(Parts.Armor);
+        random.Add(Parts.Blood);
+        int RndGen = Random.Range(0, random.Count - 1);
+        return (random[RndGen]);
+    }
     private void punchCounterChanged()
     {
         if (_counters.Punch % 10 == 0 && _counters.Punch != 0)
@@ -244,47 +298,6 @@ public class CombatSystem : MonoBehaviour
         }
         AvailabilityIsChanged?.Invoke(_availabilityCounters);
     }
-    public void OnButtonClick(int index)
-    {
-        switch (index)
-        {
-            case 0:
-                // chanse to click punch button extra times. 
-                //Every 100% makes 1 warranty extra click
-                //For example 125% = double click and 25% chance for triple click
-                int times = 1;
-                if (_stats.ExtraFillingChance > 0)
-                {
-                    int add = _stats.ExtraFillingChance % 100;
-                    times += _stats.ExtraFillingChance / 100;
-                    if (checkProc((float)add) == true)
-                        times++;
-                }
-                for (int i = 0; i < times; i++)
-                    OnPunchButtonClick();
-                break;
-            case 1:
-                OnArmorButtonClick();
-                break;
-            case 2:
-                OnWingButtonClick();
-                break;
-            case 3:
-                OnSwordButtonClick();
-                break;
-            case 4:
-                OnNimbusButtonClick();
-                break;
-            case 5:
-                OnWrathButtonClick();
-                break;
-            default:
-                Debug.LogError($"OnButtonClick wrong index {index}");
-                break;
-        }
-        AvailabilityIsChanged?.Invoke(_availabilityCounters);
-        updateGui();
-    }
     private void updateGui()
     {
         if (isPlayer == true)
@@ -305,34 +318,33 @@ public class CombatSystem : MonoBehaviour
         if (sound != null)
             sound.Play();
     }
-
-    private void testGetDamage ()
+    private void testGetDamage()
     {
-        _effects.WingsHits =10;
+        _effects.WingsHits = 10;
         _effects.ArmorLayers = 0;
         _stats.Life = 10;
-        _stats.EvasonRating=int.MaxValue;
+        _stats.EvasonRating = int.MaxValue;
         _stats.calculateStats();
         Debug.Log($"chance {_stats.EvasonChance}");
         GetDamage(2, false, 0);
-        Debug.Log ($"WingsHits = {_effects.WingsHits }(9),Life = {_stats.Life}(10)");
+        Debug.Log($"WingsHits = {_effects.WingsHits}(9),Life = {_stats.Life}(10)");
         GetDamage(2, true, 0);
-        Debug.Log ($"WingsHits = {_effects.WingsHits }(8),Life = {_stats.Life}(9)");
+        Debug.Log($"WingsHits = {_effects.WingsHits}(8),Life = {_stats.Life}(9)");
         _effects.ArmorLayers = 5;
         _stats.ArmorValue = 10;
-        _effects.WingsHits =0;
+        _effects.WingsHits = 0;
         _stats.Life = 20;
         GetDamage(15, false, 0);
-        Debug.Log ($"ArmorLayers = {_effects.ArmorLayers }(4),Life = {_stats.Life}(15)");
+        Debug.Log($"ArmorLayers = {_effects.ArmorLayers}(4),Life = {_stats.Life}(15)");
         GetDamage(5, false, 10);
-        Debug.Log ($"ArmorLayers = {_effects.ArmorLayers }(3),Life = {_stats.Life}(5)");
+        Debug.Log($"ArmorLayers = {_effects.ArmorLayers}(3),Life = {_stats.Life}(5)");
         GetDamage(1, false, 5);
-        Debug.Log ($"ArmorLayers = {_effects.ArmorLayers }(2),Life = {_stats.Life}(4)");
+        Debug.Log($"ArmorLayers = {_effects.ArmorLayers}(2),Life = {_stats.Life}(4)");
         GetDamage(1, false, 4);
-        Debug.Log ($"ArmorLayers = {_effects.ArmorLayers }(1),Life = {_stats.Life}(4)");
+        Debug.Log($"ArmorLayers = {_effects.ArmorLayers}(1),Life = {_stats.Life}(4)");
         GetDamage(8, false, 0);
-        Debug.Log ($"ArmorLayers = {_effects.ArmorLayers }(0),Life = {_stats.Life}(4)");
+        Debug.Log($"ArmorLayers = {_effects.ArmorLayers}(0),Life = {_stats.Life}(4)");
         GetDamage(2, false, 0);
-        Debug.Log ($"Life = {_stats.Life}(2)");
+        Debug.Log($"Life = {_stats.Life}(2)");
     }
 }
