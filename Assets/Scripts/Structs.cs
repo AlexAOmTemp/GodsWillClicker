@@ -1,4 +1,5 @@
-public enum Parts{
+public enum Parts
+{
     Blood,
     Armor,
     Weapons,
@@ -38,9 +39,9 @@ public struct Stats
     public int EvasonRating; //rating should be recalculated to stat by using RatingToStat
     public int DropRating;
     public int CriticalRating;
-    public float EvasonChance {get; private set;}
-    public float DropChance {get; private set;} 
-    public float CriticalChance {get; private set;}
+    public float EvasonChance { get; private set; }
+    public float DropChance { get; private set; }
+    public float CriticalChance { get; private set; }
     public int ExtraFillingChance;
     public int CriticalDamage;
     public int WeaponDamage;
@@ -55,7 +56,7 @@ public struct Stats
         //100 = 50%, 300 = 75%
         if (rating <= 0)
             return 0;
-        float Value = (1f - 100f / (100f + (float)rating))*100f;
+        float Value = (1f - 100f / (100f + (float)rating)) * 100f;
         return Value;
     }
     public void calculateStats()
@@ -75,20 +76,21 @@ public struct Stats
         CriticalDamage = 200;
         WeaponDamage = 10;
         ArmorValue = 10;
-        ArmorApplied=1;
-        WeaponApplied=1;
-        WingApplied=1;
-        NimbusApplied=1;
-        WrathApplied=1;
+        ArmorApplied = 1;
+        WeaponApplied = 1;
+        WingApplied = 1;
+        NimbusApplied = 1;
+        WrathApplied = 1;
         calculateStats();
     }
 }
-    public enum Buffs
-    {
-        Armor = 1,
-        Sword = 2,
-        Wings = 3,
-        Nimbus = 4,
-        Wrath = 5
-    }
+public enum Buffs
+{
+    Punch = 0,
+    Armor = 1,
+    Sword = 2,
+    Wings = 3,
+    Nimbus = 4,
+    Wrath = 5
+}
 

@@ -4,7 +4,6 @@ public class CombatSystem : MonoBehaviour
 {
     [SerializeField] private Animations _animations;
     [SerializeField] private CombatSystem _enemy;
-    [SerializeField] private PartsTimers _partsTimers;
     [SerializeField] private GuiController _guiController;
     [SerializeField] bool isPlayer;
     #region Audio
@@ -23,6 +22,8 @@ public class CombatSystem : MonoBehaviour
     public event Death IsDead;
     public delegate void AvailabilityChanged(Counters availabilityCounters);
     public event AvailabilityChanged AvailabilityIsChanged;
+    public delegate void PartsCounterChanged(DemonParts DemonParts);
+    public event PartsCounterChanged PartsCounterIsChanged;
 
     #endregion
     #region Private Variables
@@ -32,21 +33,16 @@ public class CombatSystem : MonoBehaviour
     private Counters _counters;
     private Counters _availabilityCounters = new Counters();
     #endregion
-
-    void Awake()
-    {
-        _partsTimers.CounterIsReady += onTimerReady;
-    }
     public void Init(Stats stats, DemonParts parts, Counters availabilityCounters, ActiveEffects effects)
     {
-        testGetDamage();
+        //testGetDamage();
         _stats = stats;
         _stats.calculateStats();
         _parts = parts;
         _availabilityCounters = availabilityCounters;
         _counters = new Counters();
         _effects = effects;
-        _partsTimers.Init(_parts);
+        PartsCounterIsChanged?.Invoke(_parts);
         updateGui();
     }
     public void OnButtonClick(int index)
@@ -94,6 +90,9 @@ public class CombatSystem : MonoBehaviour
     {
         bool wingHit = false;
         bool armorHit = false;
+        bool sword = false;
+        if (swordDamage > 0)
+            sword = true;
         if (_effects.WingsHits > 0)
         {
             wingHit = true;
@@ -107,6 +106,7 @@ public class CombatSystem : MonoBehaviour
                     damage /= 2;
                 else    //non crit makes no damage
                 {
+                    _guiController.GenerateDamageText(isPlayer, "Evade", false, false);
                     ifSetPlaySound(_evasonSound);
                     updateGui();
                     return;
@@ -129,11 +129,13 @@ public class CombatSystem : MonoBehaviour
 
             if (damage <= 0)//all damage is blocked
             {
+                _guiController.GenerateDamageText(isPlayer, "Block", false, false);
                 ifSetPlaySound(_receiveArmorDamageSound);
                 updateGui();
                 return;
             }
         }
+        _guiController.GenerateDamageText(isPlayer, damage.ToString(), sword, isCrit);
         _stats.Life -= damage;
         ifSetPlaySound(_receiveFleshDamageSound);
         if (checkProc(_enemy.GetDropChance()))
@@ -162,7 +164,7 @@ public class CombatSystem : MonoBehaviour
                 _parts.Horns++;
                 break;
         }
-        _partsTimers.PartsCounterUpdated(_parts);
+        PartsCounterIsChanged?.Invoke(_parts);
     }
     public float GetDropChance()
     {
@@ -175,49 +177,49 @@ public class CombatSystem : MonoBehaviour
     }
     private void onArmorButtonClick()
     {
-        _availabilityCounters.Armor -= 1;
-        _counters.Armor += 1;
-        _effects.ArmorLayers += 3;
-        if (_counters.Armor % 10 == 0)
-            _availabilityCounters.Swords += 1;
+        _availabilityCounters.Armor--;
+        _effects.ArmorLayers += _stats.ArmorApplied;
+        updateAvailibleCounter(ref _counters.Swords, ref _availabilityCounters.Swords);
         _animations.ActivateBuff(Buffs.Armor, true);
         ifSetPlaySound(_armorSound);
     }
     private void onSwordButtonClick()
     {
-        _availabilityCounters.Swords -= 1;
-        _counters.Swords += 1;
-        _effects.WeaponHits += 3;
-        if (_counters.Swords % 10 == 0)
-            _availabilityCounters.Wings += 1;
+        _availabilityCounters.Swords--;
+        _effects.WeaponHits += _stats.WeaponApplied;
+        /*_counters.Wings++;
+        if (_counters.Wings % 10 == 0)
+            _availabilityCounters.Wings++;*/
+        updateAvailibleCounter(ref _counters.Wings, ref _availabilityCounters.Wings);
         _animations.ActivateBuff(Buffs.Sword, true);
         ifSetPlaySound(_swordSound);
     }
     private void onWingButtonClick()
     {
-        _availabilityCounters.Wings -= 1;
-        _counters.Wings += 1;
-        _effects.WingsHits += 3;
-        if (_counters.Wings % 10 == 0)
-            _availabilityCounters.Nimbus += 1;
+        _availabilityCounters.Wings--;
+        _effects.WingsHits += _stats.WingApplied;
+        /*_counters.Nimbus++;
+        if (_counters.Nimbus % 10 == 0)
+            _availabilityCounters.Nimbus += 1;*/
+        updateAvailibleCounter(ref _counters.Nimbus, ref _availabilityCounters.Nimbus);
         _animations.ActivateBuff(Buffs.Wings, true);
         ifSetPlaySound(_wingSound);
     }
     private void onNimbusButtonClick()
     {
-        _availabilityCounters.Nimbus -= 1;
-        _counters.Nimbus += 1;
-        _effects.NimbusHits += 3;
-        if (_counters.Nimbus % 10 == 0)
-            _availabilityCounters.Wrath += 1;
+        _availabilityCounters.Nimbus--;
+        _effects.NimbusHits += _stats.NimbusApplied;
+        /*_counters.Wrath++;
+        if (_counters.Wrath % 10 == 0)
+            _availabilityCounters.Wrath++;*/
+        updateAvailibleCounter(ref _counters.Wrath, ref _availabilityCounters.Wrath);
         _animations.ActivateBuff(Buffs.Nimbus, true);
         ifSetPlaySound(_nimbusSound);
     }
     private void OnWrathButtonClick()
     {
-        _availabilityCounters.Wrath -= 1;
-        _counters.Wrath += 1;
-        _effects.WrathHits += 1;
+        _availabilityCounters.Wrath--;
+        _effects.WrathHits += _stats.WrathApplied;
         _animations.ActivateBuff(Buffs.Wrath, true);
         ifSetPlaySound(_wrathSound);
     }
@@ -269,11 +271,15 @@ public class CombatSystem : MonoBehaviour
     private void punchCounterChanged()
     {
         if (_counters.Punch % 10 == 0 && _counters.Punch != 0)
+        {
             makePunch();
-        if (_counters.Punch % 100 == 0 && _counters.Punch != 0)
-            _availabilityCounters.Armor += 1;
+            updateAvailibleCounter(ref _counters.Armor, ref _availabilityCounters.Armor);
+        }
+        /*_counters.Armor++;
+        if (_counters.Armor % 10 == 0)
+            _availabilityCounters.Armor++;*/
     }
-    private void onTimerReady(int index)
+    public void OnTimerReady(int index, int value)
     {
         switch (index)
         {
@@ -281,16 +287,20 @@ public class CombatSystem : MonoBehaviour
                 OnButtonClick(index);
                 break;
             case 1:
-                _availabilityCounters.Armor++;
+                updateAvailibleCounter(ref _counters.Armor, ref _availabilityCounters.Armor);
+                //_counters.Armor++;
                 break;
             case 2:
-                _availabilityCounters.Wings++;
+                updateAvailibleCounter(ref _counters.Swords, ref _availabilityCounters.Swords);
+                //_counters.Swords++;
                 break;
             case 3:
-                _availabilityCounters.Swords++;
+                updateAvailibleCounter(ref _counters.Wings, ref _availabilityCounters.Wings);
+                //_counters.Wings++;
                 break;
             case 4:
-                _availabilityCounters.Nimbus++;
+                updateAvailibleCounter(ref _counters.Nimbus, ref _availabilityCounters.Nimbus);
+                //_counters.Nimbus++;
                 break;
             default:
                 Debug.LogError($"onTimerReady wrong index {index}");
@@ -346,5 +356,11 @@ public class CombatSystem : MonoBehaviour
         Debug.Log($"ArmorLayers = {_effects.ArmorLayers}(0),Life = {_stats.Life}(4)");
         GetDamage(2, false, 0);
         Debug.Log($"Life = {_stats.Life}(2)");
+    }
+    private void updateAvailibleCounter(ref int counter, ref int availabilityCounter)
+    {
+        counter++;
+        if (counter % 10 == 0)
+            availabilityCounter++;
     }
 }

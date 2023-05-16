@@ -21,16 +21,17 @@ public class Animations : MonoBehaviour
 
     #region Private variables
     private List<string> _animationNames = new List<string>();
-    private SkeletonAnimation _skeletonAnimation;
+    //private SkeletonAnimation _skeletonAnimation;
+    private SkeletonGraphic _skeletonGraphic;
     private Spine.AnimationState _spineAnimationState;
     private Spine.Skeleton _skeleton;
     #endregion
 
     void Awake()
     {
-        _skeletonAnimation = this.GetComponent<SkeletonAnimation>();
-        _spineAnimationState = _skeletonAnimation.AnimationState;
-        _skeleton = _skeletonAnimation.Skeleton;
+        _skeletonGraphic = this.GetComponent<SkeletonGraphic>();
+        _spineAnimationState = _skeletonGraphic.AnimationState;
+        _skeleton = _skeletonGraphic.Skeleton;
         collectAnimationNames();
         _spineAnimationState.AddAnimation(0, _idleAnimationName, true, 0);
     }
@@ -42,9 +43,7 @@ public class Animations : MonoBehaviour
     public void ActivateBuff(Buffs buff, bool active)
     {
         int n = (int)buff;
-        Debug.Log($"{n} {_animationNames.Count}");
-        
-        if (_animationNames[n - 1] != null)
+        if (_animationNames[n - 1] != "")
         {
             if (active == true)
                 _spineAnimationState.SetAnimation(n, _animationNames[n - 1], true);

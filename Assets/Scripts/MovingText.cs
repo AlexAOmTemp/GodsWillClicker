@@ -5,21 +5,24 @@ using TMPro;
 
 public class MovingText : MonoBehaviour
 {
-    private RectTransform _startPosition;
     private float _endPosition;
     private RectTransform _rectTransform;
     private TMP_Text _text;
     private float _speed;
     private bool _isSet;
-    void Start()
+    void Awake()
     {
         _rectTransform = this.GetComponent<RectTransform>();
+        if (_rectTransform == null)
+            Debug.LogError("MovingText: no RectTransform found");
         _text = this.GetComponent<TextMeshProUGUI>();
+        if (_text == null)
+            Debug.LogError("MovingText: no TextMeshProUGUI found");
     }
-    public void PlayText(RectTransform startPosition, float endPositionY, float speed, string text, Color color)
+    public void PlayText(Vector3 startPosition, float endPositionY, float speed, string text, Color color)
     {
         _endPosition= endPositionY;
-        _rectTransform.position = startPosition.position;
+        _rectTransform.position = startPosition;
         _speed=speed;
         _text.SetText(text);
         _text.color = color;
@@ -31,9 +34,9 @@ public class MovingText : MonoBehaviour
         if (_isSet == true)
         {
             if (_rectTransform.position.y < _endPosition)
-                _rectTransform.Translate(Vector3.up * _speed * Time.deltaTime);
+                _rectTransform.position += Vector3.up * 50 * Time.deltaTime;
             else
-                Destroy(this);
+                Destroy(this.gameObject);
         }
     }
 }

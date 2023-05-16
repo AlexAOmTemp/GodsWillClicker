@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   atlasAssets:
   - {fileID: 11400000, guid: 0a8edcb52521e3248a74195902d633fc, type: 2}
-  scale: 0.01
+  scale: 0.00001
   skeletonJSON: {fileID: 4900000, guid: 7a030292281431542a34a409178214b5, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
-    requiresBlendModeMaterials: 0
+    requiresBlendModeMaterials: 1
     applyAdditiveMaterial: 1
-    additiveMaterials: []
+    additiveMaterials:
+    - pageName: clicker.png
+      material: {fileID: 2100000, guid: 6b6fbd910d4a8fe46852b3141486a0cc, type: 2}
     multiplyMaterials: []
     screenMaterials: []
   skeletonDataModifiers: []
