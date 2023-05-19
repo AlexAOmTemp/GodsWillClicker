@@ -1,35 +1,19 @@
-public enum Parts
+public enum ItemNames
 {
-    Blood,
-    Armor,
-    Weapons,
-    Wings,
-    Horns
+    Punch = 0,
+    Armor = 1,
+    Sword = 2,
+    Wings = 3,
+    Nimbus = 4,
+    Wrath = 5
 }
-public struct DemonParts
+public struct CountersSet
 {
-    public int Blood;
-    public int Armor;
-    public int Weapons;
-    public int Wings;
-    public int Horns;
-}
-public struct Counters
-{
-    public int Punch;
-    public int Armor;
-    public int Wings;
-    public int Swords;
-    public int Nimbus;
-    public int Wrath;
-}
-public struct ActiveEffects
-{
-    public int ArmorLayers;
-    public int WingsHits;
-    public int WeaponHits;
-    public int NimbusHits;
-    public int WrathHits;
+    public int Resource;
+    public int ButtonAwailability; 
+    public int CurrentEffectDuration; // how many hits effect will work
+    public int AddEffectDurationOnActivation;  
+    public int Clicks;
 }
 public struct Stats
 {
@@ -46,11 +30,6 @@ public struct Stats
     public int CriticalDamage;
     public int WeaponDamage;
     public int ArmorValue;
-    public int ArmorApplied;
-    public int WeaponApplied;
-    public int WingApplied;
-    public int NimbusApplied;
-    public int WrathApplied;
     private float ratingToStat(int rating)
     {
         //100 = 50%, 300 = 75%
@@ -76,21 +55,6 @@ public struct Stats
         CriticalDamage = 200;
         WeaponDamage = 10;
         ArmorValue = 10;
-        ArmorApplied = 1;
-        WeaponApplied = 1;
-        WingApplied = 1;
-        NimbusApplied = 1;
-        WrathApplied = 1;
         calculateStats();
     }
 }
-public enum Buffs
-{
-    Punch = 0,
-    Armor = 1,
-    Sword = 2,
-    Wings = 3,
-    Nimbus = 4,
-    Wrath = 5
-}
-
