@@ -24,7 +24,6 @@ public class Controller : MonoBehaviour
     }
     void buttonHandler(ItemNames name)
     {
-        Debug.Log("click");
         _playerCombatSystem.OnButtonClick(name);
     }
 

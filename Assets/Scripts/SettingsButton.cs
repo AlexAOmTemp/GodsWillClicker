@@ -18,11 +18,13 @@ public class SettingsButton : MonoBehaviour
         {
             _vision = false;
             _settingsPanel.SetActive(false);
+            Pause.UnpauseGame();
         }
         else
         {
             _vision = true;
             _settingsPanel.SetActive(true);
+            Pause.PauseGame();
         }
     }
 }
