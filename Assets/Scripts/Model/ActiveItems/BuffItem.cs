@@ -32,7 +32,7 @@ public class BuffItem : ActiveItem
         countersChanged();
 
     }
-    override protected void onTimerFinished(int value)
+    override public void OnTimerFinished(int value)
     {
         UpdateAvailibleCounter(value);
     }

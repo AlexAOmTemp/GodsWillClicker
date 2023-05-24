@@ -15,12 +15,9 @@ public class ResourceTimer : MonoBehaviour
     #endregion
 
     #region Public Methods
-   
     public void NewRoundStarted(int value)
     {
         _currentTime = 0;
-        _IncrementValue = 1;
-        ResourceCountChanged(value);
     }
     public void ResourceCountChanged(int value) //resourse value changed
     {
@@ -50,7 +47,7 @@ public class ResourceTimer : MonoBehaviour
                 if (_currentTime >= _timeBeforeClick)
                 {
                     _currentTime -= _timeBeforeClick;
-                    CountIsFinished.Invoke(_IncrementValue);
+                    CountIsFinished?.Invoke(_IncrementValue);
                 }
             }
         }
@@ -68,7 +65,7 @@ public class ResourceTimer : MonoBehaviour
             else
                 break;
         }
-        //Debug.Log($"Res Quantity ={part}, value = {_IncrementValue}, time =  {_timeBeforeClick}");
+        //Debug.Log($"Recalc time: Res Quantity ={value}, value = {_IncrementValue}, time =  {_timeBeforeClick}");
     }
     #endregion
 }

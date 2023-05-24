@@ -10,9 +10,10 @@ public class Demon : MonoBehaviour
     {
         _combat = this.GetComponent<CombatSystem>();
     }
-    public void Init(Stats stats, CountersPack counters)
+    public void StartRound(Stats stats, CountersPack counters)
     {
         _clickDelay = stats.ClickDelay;
+        _currentTime = 0;
         _combat.Init( stats, counters);
     }
     public void Update()

@@ -11,19 +11,20 @@ public class DemonsGenerator : MonoBehaviour
     public void GenerateDemon(int stage)
     {
         _stats.SetDefault();
-        _stats.ClickDelay = 0.4f;
+        _stats.ClickDelay = 1f;
         _stats.Life = 250 + stage;
-        _stats.Damage = 10;
+        _stats.Damage = 0;
         countersSet.AddEffectDurationOnActivation = 1;
-        countersSet.Resource = 5;
-
         countersPack.SetValue(ItemNames.Punch, countersSet);
+        countersSet.Resource = 30;
+
+
         countersPack.SetValue(ItemNames.Armor, countersSet);
         countersPack.SetValue(ItemNames.Sword, countersSet);
         countersPack.SetValue(ItemNames.Wings, countersSet);
         countersPack.SetValue(ItemNames.Nimbus, countersSet);
         countersPack.SetValue(ItemNames.Wrath, countersSet);
-        _demon.Init(_stats,new CountersPack (countersPack));
+        _demon.StartRound(_stats, new CountersPack(countersPack));
 
     }
 }

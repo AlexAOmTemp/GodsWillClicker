@@ -2,11 +2,12 @@ using UnityEngine;
 using System.Collections.Generic;
 public class CombatSystem : MonoBehaviour
 {
-    [SerializeField] private GameObject _resourceTimerPrefab;
     [SerializeField] private Animations _animations;
     [SerializeField] private CombatSystem _enemy;
     [SerializeField] private GuiController _guiController;
     [SerializeField] bool _isPlayer;
+    public ActiveItemsPack ActiveItems { get; private set; }
+
     #region Audio
     [SerializeField] private Sounds _sounds;
     private AudioSource _receiveFleshDamageSound;
@@ -17,23 +18,21 @@ public class CombatSystem : MonoBehaviour
     #region Public Events
     public delegate void Death();
     public event Death IsDead;
-    public ActiveItemsPack ActiveItems { get; private set; }
+    public delegate void ResourceProc (ItemNames name);
+    public ResourceProc ResorceIsGenerated; // for Collect Item Spawner class
 
     #endregion
     #region Private Fields
     private Stats _stats = new Stats();
-    private ResourceTimer[] _resourceTimers = new ResourceTimer[5];
-    private bool _timersCreated = false;
     #endregion
     #region Public Methods
     public void Init(Stats stats, CountersPack pack)
     {
-        createTimers();
-        ActiveItems = new ActiveItemsPack(_isPlayer, this, _animations, _sounds, _guiController,_resourceTimers);
         ActiveItems.SetCountersData(pack);
         _stats = stats;
         _stats.calculateStats();
         _guiController.SetMaxLife(_isPlayer, _stats.Life);
+        _guiController.UpdateLife(_isPlayer, _stats.Life);
     }
     public void OnButtonClick(ItemNames item)
     {
@@ -41,6 +40,7 @@ public class CombatSystem : MonoBehaviour
     }
     public void GetDamage(int damage, bool isCrit, int swordDamage)
     {
+        Debug.Log($"GetDamage: {damage}{swordDamage}, isPlayer {_isPlayer}");
         bool wingHit = false;
         bool armorHit = false;
         bool sword = false;
@@ -86,7 +86,14 @@ public class CombatSystem : MonoBehaviour
         _stats.Life -= damage;
         Sounds.IfSetPlaySound(_receiveFleshDamageSound);
         if (checkProc(_enemy.GetDropChance()))
-            _enemy.AddPart(generatePart(wingHit, armorHit));
+        {
+            ItemNames name = generatePart(wingHit, armorHit);
+            Debug.Log ($"ResDrop {name}, _isPlayer = {_isPlayer}");
+            if (_isPlayer == true)
+                _enemy.AddPart(name);
+            else
+                ResorceIsGenerated?.Invoke(name);
+        }
         if (_stats.Life <= 0)
             IsDead?.Invoke();
         _guiController.UpdateLife((_isPlayer), _stats.Life);
@@ -97,7 +104,8 @@ public class CombatSystem : MonoBehaviour
     }
     public float GetDropChance()
     {
-        return _stats.DropChance;
+       // return _stats.DropChance; //temp
+        return 100f;
     }
     public void MakeFewPunches(int count)
     {
@@ -108,6 +116,8 @@ public class CombatSystem : MonoBehaviour
     #region Private Methods
     private void Awake()
     {
+        ActiveItems = this.GetComponent<ActiveItemsPack>();
+        ActiveItems.Init(this);
         if (_sounds.GetFleshHitSound() != null)
             _receiveFleshDamageSound = _sounds.GetFleshHitSound();
         if (_sounds.GetEvasonSound() != null)
@@ -115,18 +125,7 @@ public class CombatSystem : MonoBehaviour
         if (_sounds.GetArmorHitSound() != null)
             _receiveArmorDamageSound = _sounds.GetArmorHitSound();
     }
-    void createTimers()
-    {
-        if (_timersCreated == false)
-        {
-            for (int i = 0; i < _resourceTimers.Length; i++)
-            {
-                var timer = Instantiate(_resourceTimerPrefab, Vector3.zero, Quaternion.identity, this.transform);
-                _resourceTimers[i] = timer.GetComponent<ResourceTimer>();
-            }
-            _timersCreated=true;
-        }
-    }
+
     private void makePunch()
     {
         _animations.PlayPunchAnimation(); ;

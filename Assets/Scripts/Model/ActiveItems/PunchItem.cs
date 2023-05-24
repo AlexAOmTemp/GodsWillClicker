@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class PunchItem : ActiveItem
 {
     private CombatSystem _combat;
@@ -27,7 +23,7 @@ public class PunchItem : ActiveItem
         _oldClickValue = newClickValue;
         countersChanged();
     }
-    override protected void onTimerFinished(int value)
+    override public void OnTimerFinished(int value)
     {
         for (int i = 0; i < value; i++)
             OnButtonClick();
