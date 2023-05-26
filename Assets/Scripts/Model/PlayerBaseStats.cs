@@ -9,9 +9,11 @@ public class PlayerBaseStats : MonoBehaviour
     public void PlayerInit()
     {
         _stats.SetDefault();
+        _stats.Damage = 50;
         countersSet.AddEffectDurationOnActivation = 1;
+
         countersPack.SetValue(ItemNames.Punch, countersSet);
-        countersSet.Resource = 30;
+        //countersSet.Resource = 30;
         countersPack.SetValue(ItemNames.Armor, countersSet);
         countersPack.SetValue(ItemNames.Sword, countersSet);
         countersPack.SetValue(ItemNames.Wings, countersSet);

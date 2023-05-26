@@ -40,7 +40,6 @@ public class CombatSystem : MonoBehaviour
     }
     public void GetDamage(int damage, bool isCrit, int swordDamage)
     {
-        Debug.Log($"GetDamage: {damage}{swordDamage}, isPlayer {_isPlayer}");
         bool wingHit = false;
         bool armorHit = false;
         bool sword = false;
@@ -88,7 +87,6 @@ public class CombatSystem : MonoBehaviour
         if (checkProc(_enemy.GetDropChance()))
         {
             ItemNames name = generatePart(wingHit, armorHit);
-            Debug.Log ($"ResDrop {name}, _isPlayer = {_isPlayer}");
             if (_isPlayer == true)
                 _enemy.AddPart(name);
             else

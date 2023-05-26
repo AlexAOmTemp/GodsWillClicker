@@ -9,6 +9,7 @@ public class GuiController : MonoBehaviour
     [Header("DamageText")]
     [SerializeField] private Canvas _canvas;
     [SerializeField] private GameObject _damageTextPrefab;
+    [SerializeField] private GameObject _battleFieldPanel;
     [SerializeField] private RectTransform _playerTextStartPosition;
     [SerializeField] private RectTransform _enemyTextStartPosition;
     [SerializeField] private RectTransform _textFinishPosition;
@@ -94,7 +95,7 @@ public class GuiController : MonoBehaviour
     }
     public void GenerateDamageText(bool player, string damage, bool sword, bool critical)
     {
-        var text = Instantiate(_damageTextPrefab, Vector3.zero, Quaternion.identity, _canvas.transform);
+        var text = Instantiate(_damageTextPrefab, Vector3.zero, Quaternion.identity, _battleFieldPanel.transform);
         var movingText = text.GetComponent<MovingText>();
         Color color = Color.grey;
         if (sword == true)
