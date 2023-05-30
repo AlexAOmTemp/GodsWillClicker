@@ -81,6 +81,7 @@ public class GuiController : MonoBehaviour
     }
     public void UpdateLife(bool isPlayer, int life)
     {
+        Debug.Log($"Gui used");
         if (isPlayer == true)
             updatePlayerLife(life);
         else
@@ -88,6 +89,7 @@ public class GuiController : MonoBehaviour
     }
     public GuiItem GetGuiItem(bool isPlayer, ItemNames name)
     {
+        Debug.Log($"Gui used");
         if (isPlayer)
             return _playerGui[name];
         else
@@ -97,7 +99,7 @@ public class GuiController : MonoBehaviour
     {
         var text = Instantiate(_damageTextPrefab, Vector3.zero, Quaternion.identity, _battleFieldPanel.transform);
         var movingText = text.GetComponent<MovingText>();
-        Color color = Color.grey;
+        Color color = Color.white;
         if (sword == true)
             color = Color.yellow;
         if (critical == true)
@@ -113,6 +115,7 @@ public class GuiController : MonoBehaviour
     private void Awake()
     {
         initGui();
+        Debug.Log($"Gui initialized");
     }
     private void initGui()
     {

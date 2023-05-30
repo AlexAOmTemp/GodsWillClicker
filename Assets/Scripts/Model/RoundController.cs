@@ -35,6 +35,7 @@ public class RoundController : MonoBehaviour
         _player.GetComponent<CombatSystem>().IsDead += onAngelDead;
         _enemy.GetComponent<CombatSystem>().IsDead += onDeamonDead;
         _rewardGenerator.RewardIsChoosen += onRewardChoosen;
+        _endLevelPanel.Init();
         _endLevelPanel.TryAgainIsClicked += onTryAgainClicked;
     }
     private void Start()

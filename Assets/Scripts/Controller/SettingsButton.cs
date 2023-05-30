@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsButton : MonoBehaviour
+public class CloseSettingsButton : MonoBehaviour
 {
     [SerializeField] private GameObject _settingsPanel;
     private bool _vision = false;
@@ -14,17 +14,7 @@ public class SettingsButton : MonoBehaviour
 
     private void onButtonClick()
     {
-        if (_vision == true)
-        {
-            _vision = false;
-            _settingsPanel.SetActive(false);
-            Pause.UnpauseGame();
-        }
-        else
-        {
-            _vision = true;
-            _settingsPanel.SetActive(true);
-            Pause.PauseGame();
-        }
+        _settingsPanel.SetActive(false);
+        Pause.UnpauseGame();
     }
 }

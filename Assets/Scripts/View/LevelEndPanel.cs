@@ -26,6 +26,7 @@ public class LevelEndPanel : MonoBehaviour
     private GameObject _rewardPanel;
     private Button _tryAgainButton;
     private GameObject[] _generatedButtons = new GameObject[_MAX_REWARD_BUTTONS_COUNT];
+    private bool _isInit = false;
     #endregion
 
     #region Public Methods
@@ -38,20 +39,26 @@ public class LevelEndPanel : MonoBehaviour
         levelEnded(true, level);
         setRewardButtons(rewards);
     }
+    public void Init()
+    {
+        if (_isInit == false)
+        {
+            //this.gameObject.SetActive(true);
+            var framePanel = this.transform.Find("FramePanel");
+            _levelText = framePanel.transform.Find("LevelText").GetComponent<TextMeshProUGUI>();
+            _winPanel = framePanel.transform.Find("WinPanel").gameObject;
+            _losePanel = framePanel.transform.Find("LosePanel").gameObject;
+            _tryAgainButton = _losePanel.transform.Find("TryAgainButton").GetComponent<Button>();
+            _rewardPanel = _winPanel.transform.Find("RewardPanel").gameObject;
+            _tryAgainButton.onClick.AddListener(onTryAgainClicked);
+            generateRewardButtons();
+            _isInit = true;
+            this.gameObject.SetActive(false);
+        }
+    }
     #endregion
 
     #region Private Methods
-    private void Awake()
-    {
-        this.gameObject.SetActive(false);
-        _levelText = this.transform.Find("LevelText").GetComponent<TextMeshProUGUI>();
-        _winPanel = this.transform.Find("WinPanel").gameObject;
-        _losePanel = this.transform.Find("LosePanel").gameObject;
-        _tryAgainButton = _losePanel.transform.Find("TryAgainButton").GetComponent<Button>();
-        _rewardPanel = _winPanel.transform.Find("RewardPanel").gameObject;
-        _tryAgainButton.onClick.AddListener(onTryAgainClicked);
-        generateRewardButtons();
-    }
     private void onTryAgainClicked()
     {
         this.gameObject.SetActive(false);
@@ -92,7 +99,7 @@ public class LevelEndPanel : MonoBehaviour
                 () => rewardButtonHandler(a));
             _generatedButtons[i] = buttonObject;
         }
-        Debug.Log("LevelEndPanel: Buttons Generated"); 
+        Debug.Log("LevelEndPanel: Buttons Generated");
     }
     private void rewardButtonHandler(int button)
     {
