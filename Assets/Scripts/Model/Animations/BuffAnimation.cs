@@ -17,7 +17,7 @@ public class BuffAnimation
     }
     public void ActivateBuff(bool active)
     {
-        if (active == true)
+        if (active == true && _animationName != null)
             _spineAnimationState.SetAnimation(_track, _animationName, true);
         else
             _spineAnimationState.SetEmptyAnimation(_track, 0);

@@ -81,7 +81,6 @@ public class GuiController : MonoBehaviour
     }
     public void UpdateLife(bool isPlayer, int life)
     {
-        Debug.Log($"Gui used");
         if (isPlayer == true)
             updatePlayerLife(life);
         else

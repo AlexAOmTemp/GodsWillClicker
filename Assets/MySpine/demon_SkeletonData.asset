@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: demon_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: 0a8edcb52521e3248a74195902d633fc, type: 2}
-  scale: 0.001
+  - {fileID: 11400000, guid: a8eae25a9d1929f4ab1480c455272d70, type: 2}
+  scale: 0.03
   skeletonJSON: {fileID: 4900000, guid: 4daa7369b8fde2443a0881bd7c8fb093, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
-    requiresBlendModeMaterials: 0
+    requiresBlendModeMaterials: 1
     applyAdditiveMaterial: 1
-    additiveMaterials: []
+    additiveMaterials:
+    - pageName: clicker_original.png
+      material: {fileID: 2100000, guid: 9943a15b774328d4f8acedf2c736c7b8, type: 2}
     multiplyMaterials: []
     screenMaterials: []
   skeletonDataModifiers: []

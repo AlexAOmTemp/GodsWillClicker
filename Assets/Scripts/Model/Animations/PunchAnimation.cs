@@ -1,4 +1,3 @@
-using UnityEngine;
 using Spine.Unity;
 
 public class PunchAnimation
@@ -17,11 +16,17 @@ public class PunchAnimation
         _attackAnimationName = attackAnimationName;
         _idleAnimationName = idleAnimationName;
         _spineAnimationState.AddAnimation(_track, _idleAnimationName, true, 0);
+        
     }
 
     public void Play()
     {
         _spineAnimationState.SetAnimation(_track, _attackAnimationName, false);
         _spineAnimationState.AddAnimation(_track, _idleAnimationName, true, 0);
+    }
+    public void Stop()
+    {
+        _spineAnimationState.ClearTrack(_track);
+        _spineAnimationState.SetAnimation(_track, _idleAnimationName, true);
     }
 }

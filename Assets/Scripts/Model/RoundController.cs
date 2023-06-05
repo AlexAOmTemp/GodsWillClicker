@@ -7,10 +7,10 @@ public class RoundController : MonoBehaviour
     [SerializeField] private GameObject _player;
     [SerializeField] private GameObject _enemy;
     #endregion
-    
+
     #region Public Events
     public delegate void NewRoundStarted(int stage);
-    public event NewRoundStarted NewRoundIsStarted;
+    static public event NewRoundStarted NewRoundIsStarted;
     #endregion
     
     #region Private Fields
@@ -22,9 +22,7 @@ public class RoundController : MonoBehaviour
     {
         Debug.Log($"RoundTime {_roundTime}, Stage {_currentStage}");
         _roundTime = 0;
-        _player.GetComponent<PlayerBaseStats>().PlayerInit();
         _enemy.GetComponent<DemonsGenerator>().GenerateDemon(_currentStage);
-
         NewRoundIsStarted?.Invoke(_currentStage);
         Pause.UnpauseGame();
     }
@@ -32,6 +30,7 @@ public class RoundController : MonoBehaviour
     #region Private Methods
     private void Awake()
     {
+        NewRoundIsStarted+= _player.GetComponent<PlayerBaseStats>().StartNewRound;
         _player.GetComponent<CombatSystem>().IsDead += onAngelDead;
         _enemy.GetComponent<CombatSystem>().IsDead += onDeamonDead;
         _rewardGenerator.RewardIsChoosen += onRewardChoosen;

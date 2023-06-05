@@ -16,7 +16,7 @@ public class DemonsGenerator : MonoBehaviour
         _stats.Damage = 0 + stage*20;
         countersSet.AddEffectDurationOnActivation = 1;
         countersPack.SetValue(ItemNames.Punch, countersSet);
-        //countersSet.Resource = 30;
+        countersSet.Resource = 30;
 
 
         countersPack.SetValue(ItemNames.Armor, countersSet);

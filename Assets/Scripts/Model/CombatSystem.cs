@@ -18,12 +18,15 @@ public class CombatSystem : MonoBehaviour
     #region Public Events
     public delegate void Death();
     public event Death IsDead;
-    public delegate void ResourceProc (ItemNames name);
+    public delegate void ResourceProc(ItemNames name);
     public ResourceProc ResorceIsGenerated; // for Collect Item Spawner class
 
     #endregion
     #region Private Fields
     private Stats _stats = new Stats();
+    private bool _isCrit;
+    private int _damage;
+    private int _swordDamage;
     #endregion
     #region Public Methods
     public void Init(Stats stats, CountersPack pack)
@@ -33,18 +36,21 @@ public class CombatSystem : MonoBehaviour
         _stats.calculateStats();
         _guiController.SetMaxLife(_isPlayer, _stats.Life);
         _guiController.UpdateLife(_isPlayer, _stats.Life);
+        _animations.SetPunchCallback(punchAnimationFinished);
     }
     public void OnButtonClick(ItemNames item)
     {
         ActiveItems.GetActiveItem(item).OnButtonClick();
     }
-    public void GetDamage(int damage, bool isCrit, int swordDamage)
+
+    public void GetDamage(int damage, int swordDamage, bool isCrit)
     {
         bool wingHit = false;
         bool armorHit = false;
         bool sword = false;
         if (swordDamage > 0)
             sword = true;
+
         if (ActiveItems.IsActive(ItemNames.Wings) == true)
         {
             wingHit = true;
@@ -74,16 +80,26 @@ public class CombatSystem : MonoBehaviour
             else
                 damage += (int)(armorAfterSword / (-2));
 
+            _animations.PlayGetHitAnimation(true);
+            Sounds.IfSetPlaySound(_receiveArmorDamageSound);
             if (damage <= 0)//all damage is blocked
             {
                 _guiController.GenerateDamageText(_isPlayer, "Block", false, false);
-                Sounds.IfSetPlaySound(_receiveArmorDamageSound);
                 return;
             }
         }
+        else
+            damage += swordDamage; //no armor. Full sword damage applied
+
         _guiController.GenerateDamageText(_isPlayer, damage.ToString(), sword, isCrit);
         _stats.Life -= damage;
-        Sounds.IfSetPlaySound(_receiveFleshDamageSound);
+
+        if (armorHit == false)
+        {
+            Sounds.IfSetPlaySound(_receiveFleshDamageSound);
+            _animations.PlayGetHitAnimation(false);
+        }
+
         if (checkProc(_enemy.GetDropChance()))
         {
             ItemNames name = generatePart(wingHit, armorHit);
@@ -92,9 +108,10 @@ public class CombatSystem : MonoBehaviour
             else
                 ResorceIsGenerated?.Invoke(name);
         }
+        _guiController.UpdateLife((_isPlayer), _stats.Life);
         if (_stats.Life <= 0)
             IsDead?.Invoke();
-        _guiController.UpdateLife((_isPlayer), _stats.Life);
+
     }
     public void AddPart(ItemNames item)
     {
@@ -102,7 +119,7 @@ public class CombatSystem : MonoBehaviour
     }
     public float GetDropChance()
     {
-       // return _stats.DropChance; //temp
+        // return _stats.DropChance; //temp
         return 100f;
     }
     public void MakeFewPunches(int count)
@@ -123,30 +140,40 @@ public class CombatSystem : MonoBehaviour
         if (_sounds.GetArmorHitSound() != null)
             _receiveArmorDamageSound = _sounds.GetArmorHitSound();
     }
-
+    private void punchAnimationFinished()
+    {
+        _enemy.GetDamage(_damage, _swordDamage, _isCrit);
+    }
     private void makePunch()
     {
-        _animations.PlayPunchAnimation(); ;
-        bool isCrit = false;
-        int damage = _stats.Damage;
-        int swordDamage = 0;
-
+        _isCrit = false;
+        bool isWrath = false;
+        _damage = _stats.Damage;
+        _swordDamage = 0;
         if (ActiveItems.IsActive(ItemNames.Sword) == true)
         {
             ActiveItems.BuffChargeUsed(ItemNames.Sword);
-            swordDamage = _stats.WeaponDamage;
+            _swordDamage = _stats.WeaponDamage;
         }
         if (ActiveItems.IsActive(ItemNames.Nimbus) == true)
         {
             if (checkProc(_stats.CriticalChance) == true)
             {
                 ActiveItems.BuffChargeUsed(ItemNames.Nimbus);
-                damage = (int)(damage * _stats.CriticalDamage / 100);
-                swordDamage = (int)(swordDamage * _stats.CriticalDamage / 100);
-                isCrit = true;
+                _damage = (int)(_damage * _stats.CriticalDamage / 100);
+                _swordDamage = (int)(_swordDamage * _stats.CriticalDamage / 100);
+                _isCrit = true;
             }
         }
-        _enemy.GetDamage(damage, isCrit, swordDamage);
+        if (ActiveItems.IsActive(ItemNames.Wrath) == true)
+        {
+            ActiveItems.BuffChargeUsed(ItemNames.Wrath);
+            _damage *= 5;
+            _swordDamage *= 5;
+            isWrath = true;
+        }
+        _animations.PlayPunchAnimation(_isCrit, isWrath);
+        //_enemy.GetDamage(_damage, _isCrit, _swordDamage);
     }
     private ItemNames generatePart(bool wing, bool armor)
     {

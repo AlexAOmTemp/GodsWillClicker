@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: background_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: 0a8edcb52521e3248a74195902d633fc, type: 2}
-  scale: 0.00001
+  - {fileID: 11400000, guid: a8eae25a9d1929f4ab1480c455272d70, type: 2}
+  scale: 0.01
   skeletonJSON: {fileID: 4900000, guid: 7a030292281431542a34a409178214b5, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
     requiresBlendModeMaterials: 1
     applyAdditiveMaterial: 1
     additiveMaterials:
-    - pageName: clicker.png
-      material: {fileID: 2100000, guid: 6b6fbd910d4a8fe46852b3141486a0cc, type: 2}
+    - pageName: clicker_original.png
+      material: {fileID: 2100000, guid: 9943a15b774328d4f8acedf2c736c7b8, type: 2}
     multiplyMaterials: []
     screenMaterials: []
   skeletonDataModifiers: []

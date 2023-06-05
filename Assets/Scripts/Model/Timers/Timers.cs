@@ -5,7 +5,6 @@ using UnityEngine;
 public class Timers : MonoBehaviour
 {
     [SerializeField] private GameObject _resourceTimerPrefab;
-    [SerializeField] private RoundController _roundController;
     private Dictionary<ItemNames, ResourceTimer> _resourceTimers = new Dictionary<ItemNames, ResourceTimer>();
 
     public void SetCountFinishDelegate(ItemNames itemName, ResourceTimer.CountFinish onCountFinish)
@@ -22,14 +21,14 @@ public class Timers : MonoBehaviour
         {
             var timer = Instantiate(_resourceTimerPrefab, Vector3.zero, Quaternion.identity, this.transform);
             var resourceTimer = timer.GetComponent<ResourceTimer>();
-            _roundController.NewRoundIsStarted += resourceTimer.NewRoundStarted;
+            RoundController.NewRoundIsStarted += resourceTimer.NewRoundStarted;
             _resourceTimers.Add(itemName, resourceTimer);
         }
     }
     void OnDestroy()
     {
         foreach (var resourceTimer in _resourceTimers.Values)
-            _roundController.NewRoundIsStarted -= resourceTimer.NewRoundStarted;
+            RoundController.NewRoundIsStarted -= resourceTimer.NewRoundStarted;
     }
 
 }

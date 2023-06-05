@@ -30,7 +30,7 @@ public struct Stats
     public int CriticalDamage;
     public int WeaponDamage;
     public int ArmorValue;
-    private float ratingToStat(int rating)
+    public float RatingToStat(int rating)
     {
         //100 = 50%, 300 = 75%
         if (rating <= 0)
@@ -40,14 +40,14 @@ public struct Stats
     }
     public void calculateStats()
     {
-        EvasonChance = ratingToStat(EvasonRating);
-        CriticalChance = ratingToStat(CriticalRating);
-        DropChance = ratingToStat(DropRating);
+        EvasonChance = RatingToStat(EvasonRating);
+        CriticalChance = RatingToStat(CriticalRating);
+        DropChance = RatingToStat(DropRating);
     }
     public void SetDefault()
     {
         Damage = 10;
-        Life = 250;
+        Life = 100;
         ClickDelay = 0.4f;
         EvasonRating = 5;
         DropRating = 10;

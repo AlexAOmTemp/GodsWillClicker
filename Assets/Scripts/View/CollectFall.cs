@@ -26,7 +26,8 @@ public class CollectFall : MonoBehaviour
 
         // This is one divided by the total flight duration, to help convert it to 0-1 progress.
         _stepScale = _speed / distance;
-        _isInitialized= true;
+        RoundController.NewRoundIsStarted += selfDestroy;
+        _isInitialized = true;
     }
 
     void Update()
@@ -60,5 +61,13 @@ public class CollectFall : MonoBehaviour
                     Destroy(this.gameObject);
             }
         }
+    }
+    private void selfDestroy(int stage)
+    {
+        Destroy(this.gameObject);
+    }
+    private void OnDestroy()
+    {
+        RoundController.NewRoundIsStarted -= selfDestroy;
     }
 }

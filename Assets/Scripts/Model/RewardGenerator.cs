@@ -10,7 +10,7 @@ public class RewardGenerator : MonoBehaviour
     [SerializeField] private LevelEndPanel _endLevelPanel;
     [SerializeField] private Image _tempImage;
 
-    private List<RewardGui> _rewards = new List<RewardGui>();
+    private List<RewardData> _rewards = new List<RewardData>();
 
     public void generate(int stage)
     {
@@ -21,14 +21,14 @@ public class RewardGenerator : MonoBehaviour
     {
         _endLevelPanel.RewardIsChoosed += onRewardChoose;
     }
-    private List<RewardGui> tempRandomGenerator()
+    private List<RewardData> tempRandomGenerator()
     {
-        List<RewardGui> rewards = new List<RewardGui>();
+        List<RewardData> rewards = new List<RewardData>();
         int count = Random.Range(1, 6);
         for (int i = 0; i < count; i++)
         {
-            RewardGui gui = new RewardGui(_tempImage, "Reward " + i.ToString());
-            rewards.Add(gui);
+            //RewardGui gui = new RewardGui(_tempImage, "Reward " + i.ToString());
+            //rewards.Add(gui);
         }
         Debug.Log ($"RewardGenerator: Rewards generated {rewards.Count}");
         return rewards;

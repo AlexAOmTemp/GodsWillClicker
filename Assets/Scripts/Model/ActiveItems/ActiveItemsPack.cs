@@ -9,7 +9,7 @@ public class ActiveItemsPack : MonoBehaviour
     [SerializeField] private bool _isPlayer;
     private Sounds _sounds;
     private Dictionary<ItemNames, ActiveItem> _activeItems = new Dictionary<ItemNames, ActiveItem>();
-    
+
     public ActiveItem GetActiveItem(ItemNames name)
     {
         return _activeItems[name];
@@ -26,12 +26,12 @@ public class ActiveItemsPack : MonoBehaviour
             ActiveItem activeItem;
             if (itemName == ItemNames.Punch)
                 activeItem = createPunchIem(combatSystem);
-            else
+            else 
                 activeItem = createBuffItem(_animations.GetBuffAnimation(itemName), _sounds.GetBuffSound(itemName));
-           
+
             activeItem.CountersIsChanged +=
                 _guiController.GetGuiItem(_isPlayer, itemName).UpdateGui;
-            
+
             _activeItems.Add(itemName, activeItem);
         }
         setLinksToPrevItems();
@@ -56,7 +56,7 @@ public class ActiveItemsPack : MonoBehaviour
         BuffItem item = (BuffItem)_activeItems[itemName];
         return item.IsAwailible();
     }
-    private void Awake ()
+    private void Awake()
     {
         _sounds = this.GetComponent<Sounds>();
     }

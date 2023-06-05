@@ -34,7 +34,7 @@ public class LevelEndPanel : MonoBehaviour
     {
         levelEnded(false, level);
     }
-    public void LevelWon(int level, List<RewardGui> rewards)
+    public void LevelWon(int level, List<RewardData> rewards)
     {
         levelEnded(true, level);
         setRewardButtons(rewards);
@@ -71,7 +71,7 @@ public class LevelEndPanel : MonoBehaviour
         _losePanel.SetActive(!isWon);
         _levelText.SetText(_LEVEL_STRING + level.ToString());
     }
-    private void setRewardButtons(List<RewardGui> rewards)
+    private void setRewardButtons(List<RewardData> rewards)
     {
         Debug.Log($"LevelEndPanel: set reward buttons {rewards.Count}");
         //hide unused buttons
