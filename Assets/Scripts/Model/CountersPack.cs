@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 public class CountersPack
 {
-    private Dictionary<ItemNames, CountersSet> _countersPack = new Dictionary<ItemNames, CountersSet>();
+    private Dictionary<AbilityNames, CountersSet> _countersPack = new Dictionary<AbilityNames, CountersSet>();
 
     public CountersPack()
     {
-        foreach (ItemNames itemName in Enum.GetValues(typeof(ItemNames)))
+        foreach (AbilityNames abilityName in Enum.GetValues(typeof(AbilityNames)))
         {
-            _countersPack.Add(itemName, new CountersSet());
+            _countersPack.Add(abilityName, new CountersSet());
         }
     }
     public CountersPack(CountersPack PreviousPack)
@@ -17,23 +17,23 @@ public class CountersPack
         _countersPack = PreviousPack._countersPack;
     }
 
-    public void SetValue(ItemNames itemName, CountersSet countersSet)
+    public void SetValue(AbilityNames abilityName, CountersSet countersSet)
     {
-        _countersPack[itemName] = countersSet;
+        _countersPack[abilityName] = countersSet;
     }
-    public CountersSet GetValue(ItemNames itemName)
+    public CountersSet GetValue(AbilityNames abilityName)
     {
-        CountersSet data = _countersPack[itemName];
+        CountersSet data = _countersPack[abilityName];
         return data;
     }
 
-    public void IncreaseResource(ItemNames name, int value)
+    public void IncreaseResource(AbilityNames name, int value)
     {
         CountersSet set = GetValue(name);
         set.Resource += value;
         SetValue(name, set);
     }
-    public void IncreaseAddEffectDurationOnActivation(ItemNames name, int value)
+    public void IncreaseAddEffectDurationOnActivation(AbilityNames name, int value)
     {
         CountersSet set = GetValue(name);
         set.AddEffectDurationOnActivation += value;

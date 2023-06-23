@@ -18,7 +18,6 @@ public class PunchAnimation
         _spineAnimationState.AddAnimation(_track, _idleAnimationName, true, 0);
         
     }
-
     public void Play()
     {
         _spineAnimationState.SetAnimation(_track, _attackAnimationName, false);

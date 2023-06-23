@@ -3,42 +3,45 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class RewardsFiller : MonoBehaviour
 {
-    [SerializeField] private Image _testImage;
+    [SerializeField] private Sprite _testImage;
     [SerializeField] private PlayerBaseStats _stats;
     private List<RewardData> _rewards = new List<RewardData>();
-    public RewardData[] GetRewards()
+    private bool _isInitialized = false;
+    public RewardData[] GetRewards(int stage)
     {
-        return _rewards.ToArray();
+        if (_isInitialized == false)
+            Awake();
+        System.Random rnd = new System.Random();
+        var rewards = _rewards.Take(2);
+        rewards = rewards.Concat(_rewards.Skip(2).OrderBy(x => rnd.Next()).Take(1));
+        return rewards.ToArray();
     }
     private void Awake()
     {
-        Image image = _testImage;
-        string description = "Increase Damage";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseDamage));
-        description = "Increase Life";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseLife));
-        description = "Increase Evason Rating";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseEvasonRating));
-        description = "Increase Drop Rating";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseDropRating));
-        description = "Increase Critical Rating";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseCriticalRating));
-        description = "Increase Critical Damage";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseCriticalDamage));
-        description = "Increase Sword Damage";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseWeaponDamage));
-        description = "Increase Armor Value";
-        _rewards.Add(new RewardData(image, description, _stats.IncreaseArmorValue));
-
-        foreach (ItemNames itemName in Enum.GetValues(typeof(ItemNames)))
+        if (_isInitialized == false)
         {
-            description = "Increase " + itemName.ToString() + " Resourse";
-            _rewards.Add(new RewardData(image, description, _stats.IncreaseResource, itemName));
-            description = "Increase " + itemName.ToString() + " Effect";
-            _rewards.Add(new RewardData(image, description, _stats.IncreaseEffectDuration, itemName));
+            Sprite image = _testImage;
+            string description = "Increase Damage";
+            _rewards.Add(new RewardData(image, description, _stats.IncreaseDamage));
+            description = "Increase Life";
+            _rewards.Add(new RewardData(image, description, _stats.IncreaseLife));
+            description = "Increase Sword Damage";
+            _rewards.Add(new RewardData(image, description, _stats.IncreaseWeaponDamage));
+            description = "Increase Armor Value";
+            _rewards.Add(new RewardData(image, description, _stats.IncreaseArmorValue));
+
+            foreach (AbilityNames name in Enum.GetValues(typeof(AbilityNames)))
+            {
+                description = "Increase " + name.ToString() + " Resourse";
+                _rewards.Add(new RewardData(image, description, _stats.IncreaseResource, name));
+                description = "Increase " + name.ToString() + " Effect";
+                _rewards.Add(new RewardData(image, description, _stats.IncreaseEffectDuration, name));
+            }
+            _isInitialized = true;
         }
     }
 }

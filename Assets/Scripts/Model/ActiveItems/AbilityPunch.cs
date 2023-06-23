@@ -1,4 +1,4 @@
-public class PunchItem : ActiveItem
+public class AbilityPunch : Ability
 {
     private CombatSystem _combat;
     public void SetCombat(CombatSystem combat)

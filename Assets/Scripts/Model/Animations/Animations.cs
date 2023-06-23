@@ -31,7 +31,7 @@ public class Animations : MonoBehaviour
     #region Private variables
     private SkeletonGraphic _skeletonGraphic;
     private SkeletonAnimation _skeletonAnimation;
-    private Dictionary<ItemNames, BuffAnimation> _buffAnimations = new Dictionary<ItemNames, BuffAnimation>();
+    private Dictionary<AbilityNames, BuffAnimation> _buffAnimations = new Dictionary<AbilityNames, BuffAnimation>();
     private PunchAnimation _punchAnimation;
     private PunchAnimation _critAnimation;
     private PunchAnimation _wrathAnimation;
@@ -61,7 +61,7 @@ public class Animations : MonoBehaviour
         else
             _getFleshHitAnimation.Play();
     }
-    public BuffAnimation GetBuffAnimation(ItemNames name)
+    public BuffAnimation GetBuffAnimation(AbilityNames name)
     {
         if (_buffAnimations.ContainsKey(name))
             return _buffAnimations[name];
@@ -73,16 +73,16 @@ public class Animations : MonoBehaviour
         _skeletonGraphic = this.GetComponent<SkeletonGraphic>();
         RoundController.NewRoundIsStarted += resetAnamations;
 
-        createBuffAnimation(ItemNames.Armor, _armorAnimationName);
-        createBuffAnimation(ItemNames.Sword, _swordAnimationName);
-        createBuffAnimation(ItemNames.Wings, _wingsAnimationName);
-        createBuffAnimation(ItemNames.Nimbus, _nimbusAnimationName);
-        createBuffAnimation(ItemNames.Wrath, null);
-        _punchAnimation = new PunchAnimation(_skeletonGraphic, (int)ItemNames.Punch, _attackAnimationName, _idleAnimationName);
-        _wrathAnimation = new PunchAnimation(_skeletonGraphic, (int)ItemNames.Punch, _wrathAttackAnimationName, _idleAnimationName);
-        _critAnimation = new PunchAnimation(_skeletonGraphic, (int)ItemNames.Punch, _critAttackAnimationName, _idleAnimationName);
+        createBuffAnimation(AbilityNames.Armor, _armorAnimationName);
+        createBuffAnimation(AbilityNames.Sword, _swordAnimationName);
+        createBuffAnimation(AbilityNames.Wings, _wingsAnimationName);
+        createBuffAnimation(AbilityNames.Nimbus, _nimbusAnimationName);
+        createBuffAnimation(AbilityNames.Wrath, null);
+        _punchAnimation = new PunchAnimation(_skeletonGraphic, (int)AbilityNames.Punch, _attackAnimationName, _idleAnimationName);
+        _wrathAnimation = new PunchAnimation(_skeletonGraphic, (int)AbilityNames.Punch, _wrathAttackAnimationName, _idleAnimationName);
+        _critAnimation = new PunchAnimation(_skeletonGraphic, (int)AbilityNames.Punch, _critAttackAnimationName, _idleAnimationName);
 
-        int track = (int)ItemNames.Wrath + 1;
+        int track = (int)AbilityNames.Wrath + 1;
         _getFleshHitAnimation = new SingleAnimation(_skeletonGraphic, track, _getHitFlesh);
         _getArmorHitAnimation = new SingleAnimation(_skeletonGraphic, track, _getHitArmor);
 
@@ -95,10 +95,10 @@ public class Animations : MonoBehaviour
         }
         _skeletonGraphic.AnimationState.End += OnSpineAnimationEnd;
     }
-    private void createBuffAnimation(ItemNames item, string aimationName)
+    private void createBuffAnimation(AbilityNames ability, string aimationName)
     {
-        BuffAnimation animation = new BuffAnimation(_skeletonGraphic, aimationName, (int)item);
-        _buffAnimations.Add(item, animation);
+        BuffAnimation animation = new BuffAnimation(_skeletonGraphic, aimationName, (int)ability);
+        _buffAnimations.Add(ability, animation);
     }
     private void resetAnamations(int stage)
     {

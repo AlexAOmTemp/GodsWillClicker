@@ -15,46 +15,25 @@ public class PlayerBaseStats : MonoBehaviour
     #region Public Methods for Reward delegates
     public void IncreaseDamage (int value)
     {
-        _stats.Damage += value;
+        _stats.Damage += 2;
     }
     public void IncreaseLife(int value)
     {
-        _stats.Life += value;
-    }
-    public void IncreaseEvasonRating(int value)
-    {
-        _stats.EvasonRating += value;
-    }
-    public void IncreaseDropRating(int value)
-    {
-        _stats.DropRating += value;
-    }
-    public void IncreaseCriticalRating(int value)
-    {
-        _stats.CriticalRating += value;
-    }
-    public void IncreaseExtraFillingChance(int value)
-    {
-        _stats.ExtraFillingChance += value;
-    }
-    public void IncreaseCriticalDamage(int value)
-    {
-        _stats.CriticalDamage += value;
+        _stats.Life += 10;
     }
     public void IncreaseWeaponDamage(int value)
     {
-        _stats.WeaponDamage += value;
+        _stats.WeaponDamage += 2;
     }
     public void IncreaseArmorValue(int value)
     {
         _stats.ArmorValue += value;
     }
-
-    public void IncreaseResource(ItemNames name, int value)
+    public void IncreaseResource(AbilityNames name, int value)
     {
         countersPack.IncreaseResource(name, value);
     }
-    public void IncreaseEffectDuration(ItemNames name, int value)
+    public void IncreaseEffectDuration(AbilityNames name, int value)
     {
         countersPack.IncreaseAddEffectDurationOnActivation(name, value);
     }
@@ -63,16 +42,16 @@ public class PlayerBaseStats : MonoBehaviour
     private void Awake()
     {
         _stats.SetDefault();
-        _stats.Life = 2000;
-        _stats.Damage = 1;
+        _stats.Life = 1000;
+        _stats.Damage = 30;
         countersSet.AddEffectDurationOnActivation = 1;
-        countersSet.Resource = 30;
-        countersPack.SetValue(ItemNames.Punch, countersSet);
-        countersPack.SetValue(ItemNames.Armor, countersSet);
-        countersPack.SetValue(ItemNames.Sword, countersSet);
-        countersPack.SetValue(ItemNames.Wings, countersSet);
-        countersPack.SetValue(ItemNames.Nimbus, countersSet);
-        countersPack.SetValue(ItemNames.Wrath, countersSet);
+        countersSet.Resource = 20;
+        countersPack.SetValue(AbilityNames.Punch, countersSet);
+        countersPack.SetValue(AbilityNames.Armor, countersSet);
+        countersPack.SetValue(AbilityNames.Sword, countersSet);
+        countersPack.SetValue(AbilityNames.Wings, countersSet);
+        countersPack.SetValue(AbilityNames.Nimbus, countersSet);
+        countersPack.SetValue(AbilityNames.Wrath, countersSet);
     }
 
 }

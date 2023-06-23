@@ -60,8 +60,8 @@ public class GuiController : MonoBehaviour
     #region Private Variables
     private int _playerMaxLife;
     private int _enemyMaxLife;
-    private Dictionary<ItemNames, GuiItem> _playerGui = new Dictionary<ItemNames, GuiItem>();
-    private Dictionary<ItemNames, GuiItem> _enemyGui = new Dictionary<ItemNames, GuiItem>();
+    private Dictionary<AbilityNames, GuiItem> _playerGui = new Dictionary<AbilityNames, GuiItem>();
+    private Dictionary<AbilityNames, GuiItem> _enemyGui = new Dictionary<AbilityNames, GuiItem>();
 
     #endregion
 
@@ -86,9 +86,8 @@ public class GuiController : MonoBehaviour
         else
             updateEnemyLife(life);
     }
-    public GuiItem GetGuiItem(bool isPlayer, ItemNames name)
+    public GuiItem GetGuiItem(bool isPlayer, AbilityNames name)
     {
-        Debug.Log($"Gui used");
         if (isPlayer)
             return _playerGui[name];
         else
@@ -119,30 +118,30 @@ public class GuiController : MonoBehaviour
     private void initGui()
     {
         GuiItem gui = new GuiItem(_punchButton, null, _bloodResourse, null);
-        _playerGui.Add(ItemNames.Punch, gui);
+        _playerGui.Add(AbilityNames.Punch, gui);
         gui = new GuiItem(_armorButton, _armorCounter, _armorResourse, _playerArmorEffects);
-        _playerGui.Add(ItemNames.Armor, gui);
+        _playerGui.Add(AbilityNames.Armor, gui);
         gui = new GuiItem(_swordButton, _swordCounter, _weaponResourse, _playerWeaponEffects);
-        _playerGui.Add(ItemNames.Sword, gui);
+        _playerGui.Add(AbilityNames.Sword, gui);
         gui = new GuiItem(_wingButton, _wingCounter, _wingResourse, _playerWingEffects);
-        _playerGui.Add(ItemNames.Wings, gui);
+        _playerGui.Add(AbilityNames.Wings, gui);
         gui = new GuiItem(_nimbusButton, _nimbusCounter, _hornResourse, _playerNimbusEffects);
-        _playerGui.Add(ItemNames.Nimbus, gui);
+        _playerGui.Add(AbilityNames.Nimbus, gui);
         gui = new GuiItem(_wrathButton, _wrathCounter, null, _playerWrathEffects);
-        _playerGui.Add(ItemNames.Wrath, gui);
+        _playerGui.Add(AbilityNames.Wrath, gui);
 
         gui = new GuiItem(null, null, null, null);
-        _enemyGui.Add(ItemNames.Punch, gui);
+        _enemyGui.Add(AbilityNames.Punch, gui);
         gui = new GuiItem(null, null, null, _enemyArmorEffects);
-        _enemyGui.Add(ItemNames.Armor, gui);
+        _enemyGui.Add(AbilityNames.Armor, gui);
         gui = new GuiItem(null, null, null, _enemyWeaponEffects);
-        _enemyGui.Add(ItemNames.Sword, gui);
+        _enemyGui.Add(AbilityNames.Sword, gui);
         gui = new GuiItem(null, null, null, _enemyWingEffects);
-        _enemyGui.Add(ItemNames.Wings, gui);
+        _enemyGui.Add(AbilityNames.Wings, gui);
         gui = new GuiItem(null, null, null, _enemyNimbusEffects);
-        _enemyGui.Add(ItemNames.Nimbus, gui);
+        _enemyGui.Add(AbilityNames.Nimbus, gui);
         gui = new GuiItem(null, null, null, _enemyWrathEffects);
-        _enemyGui.Add(ItemNames.Wrath, gui);
+        _enemyGui.Add(AbilityNames.Wrath, gui);
     }
     private void updatePlayerLife(int playerLife)
     {
@@ -156,6 +155,5 @@ public class GuiController : MonoBehaviour
         _enemyHealthFiller.localScale = new Vector3(scale, 1, 1);
         _enemyLifeText.SetText(enemyLife.ToString());
     }
-
     #endregion
 }

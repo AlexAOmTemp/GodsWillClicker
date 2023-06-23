@@ -1,16 +1,16 @@
 using UnityEngine;
-public abstract class ActiveItem
+public abstract class Ability
 {
     #region Private Fields
     public delegate void ChangeCounters(CountersSet counters);
     public event ChangeCounters CountersIsChanged;
     public delegate void ResourceCountChanged(int newValue);
     public event ResourceCountChanged ResourceCountIsChanged;
-    protected BuffItem _next;
+    protected AbilityBuff _next;
     protected CountersSet _counters;
     protected int _oldClickValue;
     #endregion
-    public void Init(BuffItem next = null)
+    public void Init(AbilityBuff next = null)
     {
         _next = next;
         CountersIsChanged?.Invoke(_counters);

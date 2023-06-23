@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BuffItem : ActiveItem
+public class AbilityBuff : Ability
 {
     public delegate void PlayAnimation(bool activate);
     public event PlayAnimation AnimationIsPlaying;

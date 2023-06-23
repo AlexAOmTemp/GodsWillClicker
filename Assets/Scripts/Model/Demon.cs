@@ -23,16 +23,16 @@ public class Demon : MonoBehaviour
         {
             _currentTime = 0;
             //check if we can use buf 
-            for (int i=  Enum.GetNames(typeof(ItemNames)).Length-1; i>=1; i--)
+            for (int i=  Enum.GetNames(typeof(AbilityNames)).Length-1; i>=1; i--)
             {
-                if (_combat.ActiveItems.IsAwailible( (ItemNames)i ) )
+                if (_combat.Abilities.IsAwailible( (AbilityNames)i ) )
                 {
-                    _combat.OnButtonClick( (ItemNames)i );
+                    _combat.OnButtonClick( (AbilityNames)i );
                     break;
                 }
             }
             //or just attack
-            _combat.OnButtonClick(ItemNames.Punch);
+            _combat.OnButtonClick(AbilityNames.Punch);
         }
     }
 }

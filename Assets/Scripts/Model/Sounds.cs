@@ -15,24 +15,24 @@ public class Sounds : MonoBehaviour
     [SerializeField] private AudioSource _wrathSound;
     #endregion
 
-    public AudioSource GetBuffSound(ItemNames name)
+    public AudioSource GetBuffSound(AbilityNames name)
     {
         AudioSource sound = null;
         switch (name)
         {
-            case ItemNames.Armor:
+            case AbilityNames.Armor:
             sound = _armorSound;
                 break;
-            case ItemNames.Sword:
+            case AbilityNames.Sword:
             sound = _swordSound;
                 break;
-            case ItemNames.Wings:
+            case AbilityNames.Wings:
             sound = _wingSound;
                 break;
-            case ItemNames.Nimbus:
+            case AbilityNames.Nimbus:
             sound = _nimbusSound;
                 break;
-            case ItemNames.Wrath:
+            case AbilityNames.Wrath:
             sound = _wrathSound;
                 break;
         }

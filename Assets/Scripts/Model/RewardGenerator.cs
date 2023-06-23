@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class RewardGenerator : MonoBehaviour
 {
@@ -8,34 +6,27 @@ public class RewardGenerator : MonoBehaviour
     public event RewardChoosen RewardIsChoosen;
 
     [SerializeField] private LevelEndPanel _endLevelPanel;
-    [SerializeField] private Image _tempImage;
-
-    private List<RewardData> _rewards = new List<RewardData>();
+    [SerializeField] private RewardsFiller _rewardFiller;
+    private RewardData[] _rewards;
 
     public void generate(int stage)
     {
-        _endLevelPanel.LevelWon(stage, tempRandomGenerator());
+        _endLevelPanel.LevelWon(stage, tempRandomGenerator(stage));
     }
 
     private void Awake()
     {
         _endLevelPanel.RewardIsChoosed += onRewardChoose;
     }
-    private List<RewardData> tempRandomGenerator()
+    private RewardData[] tempRandomGenerator(int stage)
     {
-        List<RewardData> rewards = new List<RewardData>();
-        int count = Random.Range(1, 6);
-        for (int i = 0; i < count; i++)
-        {
-            //RewardGui gui = new RewardGui(_tempImage, "Reward " + i.ToString());
-            //rewards.Add(gui);
-        }
-        Debug.Log ($"RewardGenerator: Rewards generated {rewards.Count}");
-        return rewards;
+        _rewards = _rewardFiller.GetRewards(stage);
+        return _rewards;
     }
     private void onRewardChoose(int rewardId)
     {
-         Debug.Log ($"RewardGenerator: Rewards choosen {rewardId}");
+        Debug.Log($"RewardGenerator: Rewards choosen {rewardId}");
+        _rewards[rewardId].InvokeEffect();
         RewardIsChoosen?.Invoke();
     }
 

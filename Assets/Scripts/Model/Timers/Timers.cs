@@ -5,24 +5,24 @@ using UnityEngine;
 public class Timers : MonoBehaviour
 {
     [SerializeField] private GameObject _resourceTimerPrefab;
-    private Dictionary<ItemNames, ResourceTimer> _resourceTimers = new Dictionary<ItemNames, ResourceTimer>();
+    private Dictionary<AbilityNames, ResourceTimer> _resourceTimers = new Dictionary<AbilityNames, ResourceTimer>();
 
-    public void SetCountFinishDelegate(ItemNames itemName, ResourceTimer.CountFinish onCountFinish)
+    public void SetCountFinishDelegate(AbilityNames name, ResourceTimer.CountFinish onCountFinish)
     {
-        _resourceTimers[itemName].CountIsFinished += onCountFinish;
+        _resourceTimers[name].CountIsFinished += onCountFinish;
     }
-    public ResourceTimer GetTemer(ItemNames itemName)
+    public ResourceTimer GetTemer(AbilityNames name)
     {
-        return _resourceTimers[itemName];
+        return _resourceTimers[name];
     }
     void Awake()
     {
-        foreach (ItemNames itemName in Enum.GetValues(typeof(ItemNames)))
+        foreach (AbilityNames name in Enum.GetValues(typeof(AbilityNames)))
         {
             var timer = Instantiate(_resourceTimerPrefab, Vector3.zero, Quaternion.identity, this.transform);
             var resourceTimer = timer.GetComponent<ResourceTimer>();
             RoundController.NewRoundIsStarted += resourceTimer.NewRoundStarted;
-            _resourceTimers.Add(itemName, resourceTimer);
+            _resourceTimers.Add(name, resourceTimer);
         }
     }
     void OnDestroy()
