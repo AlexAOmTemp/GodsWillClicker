@@ -42,10 +42,10 @@ public class PlayerBaseStats : MonoBehaviour
     private void Awake()
     {
         _stats.SetDefault();
-        _stats.Life = 1000;
-        _stats.Damage = 30;
+        _stats.Life = 100;
+        _stats.Damage = 10;
         countersSet.AddEffectDurationOnActivation = 1;
-        countersSet.Resource = 20;
+        countersSet.Resource = 5;
         countersPack.SetValue(AbilityNames.Punch, countersSet);
         countersPack.SetValue(AbilityNames.Armor, countersSet);
         countersPack.SetValue(AbilityNames.Sword, countersSet);
