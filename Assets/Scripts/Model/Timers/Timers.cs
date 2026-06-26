@@ -11,11 +11,13 @@ public class Timers : MonoBehaviour
     {
         _resourceTimers[name].CountIsFinished += onCountFinish;
     }
+
     public ResourceTimer GetTemer(AbilityNames name)
     {
         return _resourceTimers[name];
     }
-    void Awake()
+
+    private void Awake()
     {
         foreach (AbilityNames name in Enum.GetValues(typeof(AbilityNames)))
         {
@@ -25,10 +27,10 @@ public class Timers : MonoBehaviour
             _resourceTimers.Add(name, resourceTimer);
         }
     }
-    void OnDestroy()
+
+    private void OnDestroy()
     {
         foreach (var resourceTimer in _resourceTimers.Values)
             RoundController.NewRoundIsStarted -= resourceTimer.NewRoundStarted;
     }
-
 }

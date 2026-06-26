@@ -6,29 +6,33 @@ using Spine;
 public class Animations : MonoBehaviour
 {
     #region Inspector
-    // [SpineAnimation] attribute allows an Inspector dropdown of Spine animation names coming form SkeletonAnimation.
-    [Header("Actions")]
+
+    [Header("Actions")] 
     [SpineAnimation] [SerializeField] private string _idleAnimationName;
     [SpineAnimation] [SerializeField] private string _attackAnimationName;
     [SpineAnimation] [SerializeField] private string _wrathAttackAnimationName;
     [SpineAnimation] [SerializeField] private string _critAttackAnimationName;
-    [SpineEvent(dataField: "skeletonGraphic", fallbackToTextField: true)] public string _eventName;
 
-    [Header("Buffs")]
+    [SpineEvent(dataField: "skeletonGraphic", fallbackToTextField: true)]
+    public string _eventName;
+
+    [Header("Buffs")] 
     [SpineAnimation] [SerializeField] private string _armorAnimationName;
     [SpineAnimation] [SerializeField] private string _swordAnimationName;
     [SpineAnimation] [SerializeField] private string _wingsAnimationName;
     [SpineAnimation] [SerializeField] private string _nimbusAnimationName;
 
-    [Header("Reactions")]
+    [Header("Reactions")] 
     [SpineAnimation] [SerializeField] private string _getHitFlesh;
     [SpineAnimation] [SerializeField] private string _getHitArmor;
     [SpineAnimation] [SerializeField] private string _death;
+
     #endregion
 
     public delegate void punchCallback();
 
     #region Private variables
+
     private SkeletonGraphic _skeletonGraphic;
     private SkeletonAnimation _skeletonAnimation;
     private Dictionary<AbilityNames, BuffAnimation> _buffAnimations = new Dictionary<AbilityNames, BuffAnimation>();
@@ -40,11 +44,14 @@ public class Animations : MonoBehaviour
     private Spine.EventData _eventData;
     private punchCallback _punchCallback;
     private bool _punchEventSet;
+
     #endregion
+
     public void SetPunchCallback(punchCallback callback)
     {
         _punchCallback = callback;
     }
+
     public void PlayPunchAnimation(bool isCritical, bool isWrath)
     {
         if (isWrath)
@@ -54,6 +61,7 @@ public class Animations : MonoBehaviour
         else
             _punchAnimation.Play();
     }
+
     public void PlayGetHitAnimation(bool armor)
     {
         if (armor)
@@ -61,6 +69,7 @@ public class Animations : MonoBehaviour
         else
             _getFleshHitAnimation.Play();
     }
+
     public BuffAnimation GetBuffAnimation(AbilityNames name)
     {
         if (_buffAnimations.ContainsKey(name))
@@ -68,49 +77,58 @@ public class Animations : MonoBehaviour
         else
             return null;
     }
+
     private void Awake()
     {
         _skeletonGraphic = this.GetComponent<SkeletonGraphic>();
-        RoundController.NewRoundIsStarted += resetAnamations;
+        RoundController.NewRoundIsStarted += ResetAnimations;
 
-        createBuffAnimation(AbilityNames.Armor, _armorAnimationName);
-        createBuffAnimation(AbilityNames.Sword, _swordAnimationName);
-        createBuffAnimation(AbilityNames.Wings, _wingsAnimationName);
-        createBuffAnimation(AbilityNames.Nimbus, _nimbusAnimationName);
-        createBuffAnimation(AbilityNames.Wrath, null);
-        _punchAnimation = new PunchAnimation(_skeletonGraphic, (int)AbilityNames.Punch, _attackAnimationName, _idleAnimationName);
-        _wrathAnimation = new PunchAnimation(_skeletonGraphic, (int)AbilityNames.Punch, _wrathAttackAnimationName, _idleAnimationName);
-        _critAnimation = new PunchAnimation(_skeletonGraphic, (int)AbilityNames.Punch, _critAttackAnimationName, _idleAnimationName);
+        CreateBuffAnimation(AbilityNames.Armor, _armorAnimationName);
+        CreateBuffAnimation(AbilityNames.Sword, _swordAnimationName);
+        CreateBuffAnimation(AbilityNames.Wings, _wingsAnimationName);
+        CreateBuffAnimation(AbilityNames.Nimbus, _nimbusAnimationName);
+        CreateBuffAnimation(AbilityNames.Wrath, null);
+        
+        _punchAnimation = new PunchAnimation(_skeletonGraphic, (int) AbilityNames.Punch, _attackAnimationName,
+            _idleAnimationName);
+        _wrathAnimation = new PunchAnimation(_skeletonGraphic, (int) AbilityNames.Punch, _wrathAttackAnimationName,
+            _idleAnimationName);
+        _critAnimation = new PunchAnimation(_skeletonGraphic, (int) AbilityNames.Punch, _critAttackAnimationName,
+            _idleAnimationName);
 
-        int track = (int)AbilityNames.Wrath + 1;
+        int track = (int) AbilityNames.Wrath + 1;
         _getFleshHitAnimation = new SingleAnimation(_skeletonGraphic, track, _getHitFlesh);
         _getArmorHitAnimation = new SingleAnimation(_skeletonGraphic, track, _getHitArmor);
 
 
         if (_eventName != "")
         {
-            //_eventData = _skeletonGraphic.SkeletonData.FindEvent(_eventName); //no need while only 1 event exists
             _skeletonGraphic.AnimationState.Event += HandleAnimationStateEvent;
             _punchEventSet = true; // temp while attack and crit have one animation;
         }
+
         _skeletonGraphic.AnimationState.End += OnSpineAnimationEnd;
     }
-    private void createBuffAnimation(AbilityNames ability, string aimationName)
+
+    private void CreateBuffAnimation(AbilityNames ability, string aimationName)
     {
-        BuffAnimation animation = new BuffAnimation(_skeletonGraphic, aimationName, (int)ability);
+        BuffAnimation animation = new BuffAnimation(_skeletonGraphic, aimationName, (int) ability);
         _buffAnimations.Add(ability, animation);
     }
-    private void resetAnamations(int stage)
+
+    private void ResetAnimations(int stage)
     {
         _punchAnimation.Stop();
         foreach (var animation in _buffAnimations.Values)
             animation.ActivateBuff(false);
     }
+
     private void HandleAnimationStateEvent(TrackEntry trackEntry, Spine.Event e)
     {
         if (trackEntry.Animation.Name.Equals(_attackAnimationName))
             _punchCallback?.Invoke();
     }
+
     public void OnSpineAnimationEnd(TrackEntry trackEntry)
     {
         if (trackEntry.Animation.Name.Equals(_critAttackAnimationName) && (_punchEventSet == false) ||

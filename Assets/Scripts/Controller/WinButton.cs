@@ -7,13 +7,13 @@ public class WinButton : MonoBehaviour
     [SerializeField] private GameObject _rewardPanel;
     [SerializeField] private GameObject _levelText;
 
-    void Start()
+    private void Start()
     {
         var button = this.GetComponent<Button>();
-        button.onClick.AddListener(onButtonClick);
+        button.onClick.AddListener(OnButtonClick);
     }
 
-    private void onButtonClick()
+    private void OnButtonClick()
     {
         _winPanel.SetActive(false);
         _levelText.SetActive(false);

@@ -30,42 +30,35 @@ public class CollectFall : MonoBehaviour
         _isInitialized = true;
     }
 
-    void Update()
+    private void Update()
     {
-        if (_isInitialized)
+        if (!_isInitialized)
+            return;
+
+        if (_isArrived == false)
         {
-            if (_isArrived == false)
-            {
-                // Increment our progress from 0 at the start, to 1 when we arrive.
-                _progress = Mathf.Min(_progress + Time.deltaTime * _stepScale, 1.0f);
+            _progress = Mathf.Min(_progress + Time.deltaTime * _stepScale, 1.0f);
+            float parabola = 1.0f - 4.0f * (_progress - 0.5f) * (_progress - 0.5f);
+            Vector3 nextPos = Vector3.Lerp(_startPosition, _target, _progress);
+            nextPos.y += parabola * _arcHeight;
+            transform.position = nextPos;
+            if (_progress == 1.0f)
+                _isArrived = true;
+        }
 
-                // Turn this 0-1 value into a parabola that goes from 0 to 1, then back to 0.
-                float parabola = 1.0f - 4.0f * (_progress - 0.5f) * (_progress - 0.5f);
-
-                // Travel in a straight line from our start position to the target.        
-                Vector3 nextPos = Vector3.Lerp(_startPosition, _target, _progress);
-
-                // Then add a vertical arc in excess of this.
-                nextPos.y += parabola * _arcHeight;
-
-                // Continue as before.
-                //transform.LookAt(nextPos, transform.forward);
-                transform.position = nextPos;
-                if (_progress == 1.0f)
-                    _isArrived = true;
-            }
-            if (_isArrived == true)
-            {
-                _timeBeforeDeath -= Time.deltaTime;
-                if (_timeBeforeDeath <= 0)
-                    Destroy(this.gameObject);
-            }
+        if (_isArrived)
+        {
+            _timeBeforeDeath -= Time.deltaTime;
+            if (_timeBeforeDeath <= 0)
+                Destroy(this.gameObject);
         }
     }
+
     private void selfDestroy(int stage)
     {
         Destroy(this.gameObject);
     }
+
     private void OnDestroy()
     {
         RoundController.NewRoundIsStarted -= selfDestroy;

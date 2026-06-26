@@ -21,7 +21,7 @@ public class AbilityPunch : Ability
                 _next.UpdateAvailibleCounter(diff);
         }
         _oldClickValue = newClickValue;
-        countersChanged();
+        CountersChanged();
     }
     override public void OnTimerFinished(int value)
     {

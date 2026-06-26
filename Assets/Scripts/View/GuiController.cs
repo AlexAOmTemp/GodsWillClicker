@@ -5,59 +5,65 @@ using System.Collections.Generic;
 
 public class GuiController : MonoBehaviour
 {
-    #region Serialized 
-    [Header("DamageText")]
-    [SerializeField] private Canvas _canvas;
+    #region Serialized
+
+    [Header("DamageText")] [SerializeField]
+    private Canvas _canvas;
+
     [SerializeField] private GameObject _damageTextPrefab;
     [SerializeField] private GameObject _battleFieldPanel;
     [SerializeField] private RectTransform _playerTextStartPosition;
     [SerializeField] private RectTransform _enemyTextStartPosition;
     [SerializeField] private RectTransform _textFinishPosition;
-    [Header("Buttons")]
-    [SerializeField] private Button _punchButton;
+    [Header("Buttons")] [SerializeField] private Button _punchButton;
     [SerializeField] private Button _armorButton;
     [SerializeField] private Button _wingButton;
     [SerializeField] private Button _swordButton;
     [SerializeField] private Button _nimbusButton;
     [SerializeField] private Button _wrathButton;
 
-    [Header("Awailability Counters")]
-    [SerializeField] private TMP_Text _armorCounter;
+    [Header("Awailability Counters")] [SerializeField]
+    private TMP_Text _armorCounter;
+
     [SerializeField] private TMP_Text _wingCounter;
     [SerializeField] private TMP_Text _swordCounter;
     [SerializeField] private TMP_Text _nimbusCounter;
     [SerializeField] private TMP_Text _wrathCounter;
 
-    [Header("Resource Counters")]
-    [SerializeField] private TMP_Text _bloodResourse;
+    [Header("Resource Counters")] [SerializeField]
+    private TMP_Text _bloodResourse;
+
     [SerializeField] private TMP_Text _armorResourse;
     [SerializeField] private TMP_Text _wingResourse;
     [SerializeField] private TMP_Text _weaponResourse;
     [SerializeField] private TMP_Text _hornResourse;
 
-    [Header("Player Current Effect Duration")]
-    [SerializeField] private TMP_Text _playerArmorEffects;
+    [Header("Player Current Effect Duration")] [SerializeField]
+    private TMP_Text _playerArmorEffects;
+
     [SerializeField] private TMP_Text _playerWingEffects;
     [SerializeField] private TMP_Text _playerNimbusEffects;
     [SerializeField] private TMP_Text _playerWeaponEffects;
     [SerializeField] private TMP_Text _playerWrathEffects;
 
-    [Header("Enemy Current Effect Duration")]
-    [SerializeField] private TMP_Text _enemyArmorEffects;
+    [Header("Enemy Current Effect Duration")] [SerializeField]
+    private TMP_Text _enemyArmorEffects;
+
     [SerializeField] private TMP_Text _enemyWingEffects;
     [SerializeField] private TMP_Text _enemyNimbusEffects;
     [SerializeField] private TMP_Text _enemyWeaponEffects;
     [SerializeField] private TMP_Text _enemyWrathEffects;
 
-    [Header("Life bar")]
-    [SerializeField] private TMP_Text _playerLifeText;
+    [Header("Life bar")] [SerializeField] private TMP_Text _playerLifeText;
     [SerializeField] private TMP_Text _enemyLifeText;
     [SerializeField] RectTransform _enemyHealthFiller;
     [SerializeField] RectTransform _playerHealthFiller;
     [SerializeField] RectTransform _healthBar;
+
     #endregion
 
     #region Private Variables
+
     private int _playerMaxLife;
     private int _enemyMaxLife;
     private Dictionary<AbilityNames, GuiItem> _playerGui = new Dictionary<AbilityNames, GuiItem>();
@@ -66,6 +72,7 @@ public class GuiController : MonoBehaviour
     #endregion
 
     #region Public Methods
+
     public void SetMaxLife(bool isPlayer, int maxLife)
     {
         if (isPlayer == true)
@@ -79,6 +86,7 @@ public class GuiController : MonoBehaviour
             _enemyLifeText.SetText(maxLife.ToString());
         }
     }
+
     public void UpdateLife(bool isPlayer, int life)
     {
         if (isPlayer == true)
@@ -86,6 +94,7 @@ public class GuiController : MonoBehaviour
         else
             updateEnemyLife(life);
     }
+
     public GuiItem GetGuiItem(bool isPlayer, AbilityNames name)
     {
         if (isPlayer)
@@ -93,6 +102,7 @@ public class GuiController : MonoBehaviour
         else
             return _enemyGui[name];
     }
+
     public void GenerateDamageText(bool player, string damage, bool sword, bool critical)
     {
         var text = Instantiate(_damageTextPrefab, Vector3.zero, Quaternion.identity, _battleFieldPanel.transform);
@@ -107,14 +117,17 @@ public class GuiController : MonoBehaviour
             startPosition = _playerTextStartPosition.position;
         movingText.PlayText(startPosition, _textFinishPosition.position.y, 1f, damage, color);
     }
+
     #endregion
 
     #region Private Methods
+
     private void Awake()
     {
         initGui();
         Debug.Log($"Gui initialized");
     }
+
     private void initGui()
     {
         GuiItem gui = new GuiItem(_punchButton, null, _bloodResourse, null);
@@ -143,17 +156,20 @@ public class GuiController : MonoBehaviour
         gui = new GuiItem(null, null, null, _enemyWrathEffects);
         _enemyGui.Add(AbilityNames.Wrath, gui);
     }
+
     private void updatePlayerLife(int playerLife)
     {
-        float scale = (float)playerLife / (float)_playerMaxLife;
+        float scale = (float) playerLife / (float) _playerMaxLife;
         _playerHealthFiller.localScale = new Vector3(-scale, 1, 1);
         _playerLifeText.SetText(playerLife.ToString());
     }
+
     private void updateEnemyLife(int enemyLife)
     {
-        float scale = (float)enemyLife / (float)_enemyMaxLife;
+        float scale = (float) enemyLife / (float) _enemyMaxLife;
         _enemyHealthFiller.localScale = new Vector3(scale, 1, 1);
         _enemyLifeText.SetText(enemyLife.ToString());
     }
+
     #endregion
 }

@@ -19,9 +19,9 @@ public class CollectItemSpawner : MonoBehaviour
     private CombatSystem _playerCombatSystem;
     private List<Sprite> _icons = new List<Sprite>();
 
-    void Start ()
+    private void Start()
     {
-        _enemyCombatSystem.ResorceIsGenerated+=CreateItem;
+        _enemyCombatSystem.ResorceIsGenerated += CreateItem;
         _playerCombatSystem = this.GetComponent<CombatSystem>();
         _icons.Add(_bloodIcon);
         _icons.Add(_armorIcon);
@@ -29,14 +29,14 @@ public class CollectItemSpawner : MonoBehaviour
         _icons.Add(_wingsIcon);
         _icons.Add(_hornsIcon);
     }
-    void CreateItem(AbilityNames name)
-    {
-        var prefab = Instantiate (_collectItemPrefab, _demonTransform.position, 
-            Quaternion.identity, _collectItemsFolder.transform);
-        prefab.GetComponent<RectTransform>().localScale = new Vector3(1,1,1);
-        prefab.GetComponent<CollectFall>().Init(_groundTransform);
-        prefab.GetComponent<CollectItemButton>().Init(name,_playerCombatSystem);
-        prefab.transform.Find("Icon").GetComponent<Image>().sprite = _icons[(int)name];
 
+    private void CreateItem(AbilityNames name)
+    {
+        var prefab = Instantiate(_collectItemPrefab, _demonTransform.position,
+            Quaternion.identity, _collectItemsFolder.transform);
+        prefab.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+        prefab.GetComponent<CollectFall>().Init(_groundTransform);
+        prefab.GetComponent<CollectItemButton>().Init(name, _playerCombatSystem);
+        prefab.transform.Find("Icon").GetComponent<Image>().sprite = _icons[(int) name];
     }
 }

@@ -3,23 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
 //todo change awake to init
 public class LevelEndPanel : MonoBehaviour
 {
     #region Public Events
+
     public delegate void TryAgain();
+
     public event TryAgain TryAgainIsClicked;
+
     public delegate void RewardChoosed(int rewardID);
+
     public event RewardChoosed RewardIsChoosed;
+
     #endregion
 
     #region Private Constants and Editor fields
+
     private const string _LEVEL_STRING = "Level ";
     private const int _MAX_REWARD_BUTTONS_COUNT = 10;
+    
     [SerializeField] private GameObject _buttonPrefab;
+
     #endregion
 
     #region Private Fields
+
     private TextMeshProUGUI _levelText;
     private GameObject _levelTextObject;
     private GameObject _winPanel;
@@ -29,18 +39,22 @@ public class LevelEndPanel : MonoBehaviour
     private Button _tryAgainButton;
     private GameObject[] _generatedButtons = new GameObject[_MAX_REWARD_BUTTONS_COUNT];
     private bool _isInit = false;
+
     #endregion
 
     #region Public Methods
+
     public void LevelLost(int level)
     {
         levelEnded(false, level);
     }
+
     public void LevelWon(int level, RewardData[] rewards)
     {
         levelEnded(true, level);
         setRewardButtons(rewards);
     }
+
     public void Init()
     {
         if (_isInit == false)
@@ -60,14 +74,17 @@ public class LevelEndPanel : MonoBehaviour
             this.gameObject.SetActive(false);
         }
     }
+
     #endregion
 
     #region Private Methods
+
     private void onTryAgainClicked()
     {
         this.gameObject.SetActive(false);
         TryAgainIsClicked?.Invoke();
     }
+
     private void levelEnded(bool isWon, int level)
     {
         this.gameObject.SetActive(true);
@@ -76,13 +93,14 @@ public class LevelEndPanel : MonoBehaviour
         _losePanel.SetActive(!isWon);
         _levelText.SetText(_LEVEL_STRING + level.ToString());
     }
+
     private void setRewardButtons(RewardData[] rewards)
     {
         Debug.Log($"LevelEndPanel: set reward buttons {rewards.Length}");
-        //hide unused buttons
+
         for (int i = rewards.Length; i < _MAX_REWARD_BUTTONS_COUNT; i++)
             _generatedButtons[i].SetActive(false);
-        //show and set used buttons
+
         for (int i = 0; i < rewards.Length; i++)
         {
             _generatedButtons[i].SetActive(true);
@@ -91,6 +109,7 @@ public class LevelEndPanel : MonoBehaviour
             _generatedButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(rewards[i].Description);
         }
     }
+
     private void generateRewardButtons()
     {
         for (int i = 0; i < _MAX_REWARD_BUTTONS_COUNT; i++)
@@ -104,8 +123,10 @@ public class LevelEndPanel : MonoBehaviour
                 () => rewardButtonHandler(a));
             _generatedButtons[i] = buttonObject;
         }
+
         Debug.Log("LevelEndPanel: Buttons Generated");
     }
+
     private void rewardButtonHandler(int button)
     {
         Debug.Log($"Button clicked {button}");
@@ -113,5 +134,6 @@ public class LevelEndPanel : MonoBehaviour
         RewardIsChoosed?.Invoke(button);
         _rewardPanel.SetActive(false);
     }
+
     #endregion
 }

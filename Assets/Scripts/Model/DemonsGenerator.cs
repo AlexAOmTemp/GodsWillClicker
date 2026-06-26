@@ -8,6 +8,7 @@ public class DemonsGenerator : MonoBehaviour
     private Stats _stats = new Stats();
     private CountersPack countersPack = new CountersPack();
     private CountersSet countersSet = new CountersSet();
+
     public void GenerateDemon(int stage)
     {
         _stats.SetDefault();
@@ -23,6 +24,5 @@ public class DemonsGenerator : MonoBehaviour
         countersPack.SetValue(AbilityNames.Nimbus, countersSet);
         countersPack.SetValue(AbilityNames.Wrath, countersSet);
         _demon.StartRound(_stats, new CountersPack(countersPack));
-
     }
 }

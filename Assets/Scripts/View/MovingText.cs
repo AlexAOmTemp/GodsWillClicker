@@ -13,14 +13,15 @@ public class MovingText : MonoBehaviour
 
     public void PlayText(Vector3 startPosition, float endPositionY, float speed, string text, Color color)
     {
-        _endPosition= endPositionY;
+        _endPosition = endPositionY;
         _rectTransform.position = startPosition;
-        _speed=speed;
+        _speed = speed;
         _text.SetText(text);
         _text.color = color;
         _isSet = true;
     }
-    void Awake()
+
+    private void Awake()
     {
         _rectTransform = this.GetComponent<RectTransform>();
         if (_rectTransform == null)
@@ -30,7 +31,8 @@ public class MovingText : MonoBehaviour
             Debug.LogError("MovingText: no TextMeshProUGUI found");
         RoundController.NewRoundIsStarted += selfDestroy;
     }
-    void Update()
+
+    private void Update()
     {
         if (_isSet == true)
         {
@@ -40,13 +42,14 @@ public class MovingText : MonoBehaviour
                 Destroy(this.gameObject);
         }
     }
+
     private void selfDestroy(int stage)
     {
         Destroy(this.gameObject);
     }
+
     private void OnDestroy()
     {
         RoundController.NewRoundIsStarted -= selfDestroy;
     }
-
 }

@@ -7,14 +7,16 @@ public enum AbilityNames
     Nimbus = 4,
     Wrath = 5
 }
+
 public struct CountersSet
 {
     public int Resource;
-    public int ButtonAwailability; 
+    public int ButtonAwailability;
     public int CurrentEffectDuration; // how many hits effect will work
-    public int AddEffectDurationOnActivation;  
+    public int AddEffectDurationOnActivation;
     public int Clicks;
 }
+
 public struct Stats
 {
     public int Damage;
@@ -24,6 +26,7 @@ public struct Stats
     public int CriticalDamage;
     public int WeaponDamage;
     public int ArmorValue;
+
     public void SetDefault()
     {
         Damage = 10;

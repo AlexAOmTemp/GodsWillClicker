@@ -17,7 +17,7 @@ public class AbilityBuff : Ability
         Sounds.IfSetPlaySound(_sound);
         if (_next != null)
             _next.UpdateAvailibleCounter(1);
-        countersChanged();
+        CountersChanged();
     }
     override public void UpdateAvailibleCounter(int value)
     {
@@ -29,7 +29,7 @@ public class AbilityBuff : Ability
             _counters.ButtonAwailability += diff;
         }
         _oldClickValue = newClickValue;
-        countersChanged();
+        CountersChanged();
 
     }
     override public void OnTimerFinished(int value)
@@ -41,7 +41,7 @@ public class AbilityBuff : Ability
         _counters.CurrentEffectDuration--;
         if (_counters.CurrentEffectDuration == 0)
             AnimationIsPlaying?.Invoke(false);
-        countersChanged();
+        CountersChanged();
     }
     public bool IsActive()
     {

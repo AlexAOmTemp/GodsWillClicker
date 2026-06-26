@@ -15,6 +15,7 @@ public class BuffAnimation
         _spineAnimationState = _skeletonGraphic.AnimationState;
         _track = track;
     }
+
     public void ActivateBuff(bool active)
     {
         if (active == true && _animationName != null)

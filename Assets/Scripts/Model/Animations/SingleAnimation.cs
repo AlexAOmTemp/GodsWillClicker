@@ -20,6 +20,7 @@ public class SingleAnimation
     {
         _spineAnimationState.SetAnimation(_track, _attackAnimationName, false);
     }
+
     public void Stop()
     {
         _spineAnimationState.ClearTrack(_track);

@@ -13,32 +13,39 @@ public class PlayerBaseStats : MonoBehaviour
     }
 
     #region Public Methods for Reward delegates
-    public void IncreaseDamage (int value)
+
+    public void IncreaseDamage(int value)
     {
         _stats.Damage += 2;
     }
+
     public void IncreaseLife(int value)
     {
         _stats.Life += 10;
     }
+
     public void IncreaseWeaponDamage(int value)
     {
         _stats.WeaponDamage += 2;
     }
+
     public void IncreaseArmorValue(int value)
     {
         _stats.ArmorValue += value;
     }
+
     public void IncreaseResource(AbilityNames name, int value)
     {
         countersPack.IncreaseResource(name, value);
     }
+
     public void IncreaseEffectDuration(AbilityNames name, int value)
     {
         countersPack.IncreaseAddEffectDurationOnActivation(name, value);
     }
+
     #endregion
-    
+
     private void Awake()
     {
         _stats.SetDefault();
@@ -53,5 +60,4 @@ public class PlayerBaseStats : MonoBehaviour
         countersPack.SetValue(AbilityNames.Nimbus, countersSet);
         countersPack.SetValue(AbilityNames.Wrath, countersSet);
     }
-
 }

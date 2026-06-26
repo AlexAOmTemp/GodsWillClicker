@@ -1,34 +1,47 @@
 using UnityEngine;
 using System.Collections.Generic;
+
 public class CombatSystem : MonoBehaviour
 {
     [SerializeField] private Animations _animations;
     [SerializeField] private CombatSystem _enemy;
     [SerializeField] private GuiController _guiController;
     [SerializeField] bool _isPlayer;
+    
     public AbilityPack Abilities { get; private set; }
 
     #region Audio
+
     [SerializeField] private Sounds _sounds;
     private AudioSource _receiveFleshDamageSound;
     private AudioSource _evasonSound;
     private AudioSource _receiveArmorDamageSound;
 
     #endregion
+
     #region Public Events
+
     public delegate void Death();
+
     public event Death IsDead;
+
     public delegate void ResourceProc(AbilityNames name);
+
     public ResourceProc ResorceIsGenerated; // for Collect Item Spawner class
 
     #endregion
+
     #region Private Fields
+
     private Stats _stats = new Stats();
     private bool _isCrit;
     private int _damage;
     private int _swordDamage;
+
     #endregion
+
     #region Public Methods
+
     public void Init(Stats stats, CountersPack pack)
     {
         Abilities.SetCountersData(pack);
@@ -37,6 +50,7 @@ public class CombatSystem : MonoBehaviour
         _guiController.UpdateLife(_isPlayer, _stats.Life);
         _animations.SetPunchCallback(punchAnimationFinished);
     }
+
     public void OnButtonClick(AbilityNames ability)
     {
         Abilities.GetAbility(ability).OnButtonClick();
@@ -59,7 +73,7 @@ public class CombatSystem : MonoBehaviour
 
             if (isCrit == true) //crit makes half of damage if evason is sucsessed
                 damage /= 2;
-            else    //non crit makes no damage
+            else //non crit makes no damage
             {
                 _guiController.GenerateDamageText(_isPlayer, "Evade", false, false);
                 Sounds.IfSetPlaySound(_evasonSound);
@@ -67,6 +81,7 @@ public class CombatSystem : MonoBehaviour
             }
             //}
         }
+
         if (Abilities.IsActive(AbilityNames.Armor) == true)
         {
             armorHit = true;
@@ -77,11 +92,11 @@ public class CombatSystem : MonoBehaviour
             if (armorAfterSword >= 0)
                 damage -= armorAfterSword;
             else
-                damage += (int)(armorAfterSword / (-2));
+                damage += (int) (armorAfterSword / (-2));
 
             _animations.PlayGetHitAnimation(true);
             Sounds.IfSetPlaySound(_receiveArmorDamageSound);
-            if (damage <= 0)//all damage is blocked
+            if (damage <= 0) //all damage is blocked
             {
                 _guiController.GenerateDamageText(_isPlayer, "Block", false, false);
                 return;
@@ -110,27 +125,33 @@ public class CombatSystem : MonoBehaviour
                     ResorceIsGenerated?.Invoke(name);
             }
         }
+
         _guiController.UpdateLife((_isPlayer), _stats.Life);
         if (_stats.Life <= 0)
             IsDead?.Invoke();
-
     }
+
     public void AddPart(AbilityNames ability)
     {
         Abilities.GetAbility(ability).AddResource();
     }
+
     public float GetDropChance()
     {
         // return _stats.DropChance; //temp
         return 100f;
     }
+
     public void MakeFewPunches(int count)
     {
         for (int i = 0; i < count; i++)
             makePunch();
     }
+
     #endregion
+
     #region Private Methods
+
     private void Awake()
     {
         Abilities = this.GetComponent<AbilityPack>();
@@ -142,10 +163,12 @@ public class CombatSystem : MonoBehaviour
         if (_sounds.GetArmorHitSound() != null)
             _receiveArmorDamageSound = _sounds.GetArmorHitSound();
     }
+
     private void punchAnimationFinished()
     {
         _enemy.GetDamage(_damage, _swordDamage, _isCrit);
     }
+
     private void makePunch()
     {
         _isCrit = false;
@@ -157,13 +180,15 @@ public class CombatSystem : MonoBehaviour
             Abilities.BuffChargeUsed(AbilityNames.Sword);
             _swordDamage = _stats.WeaponDamage;
         }
+
         if (Abilities.IsActive(AbilityNames.Nimbus) == true)
         {
             Abilities.BuffChargeUsed(AbilityNames.Nimbus);
-            _damage = (int)(_damage * _stats.CriticalDamage / 100);
-            _swordDamage = (int)(_swordDamage * _stats.CriticalDamage / 100);
+            _damage = (int) (_damage * _stats.CriticalDamage / 100);
+            _swordDamage = (int) (_swordDamage * _stats.CriticalDamage / 100);
             _isCrit = true;
         }
+
         if (Abilities.IsActive(AbilityNames.Wrath) == true)
         {
             Abilities.BuffChargeUsed(AbilityNames.Wrath);
@@ -171,8 +196,10 @@ public class CombatSystem : MonoBehaviour
             _swordDamage *= 5;
             isWrath = true;
         }
+
         _animations.PlayPunchAnimation(_isCrit, isWrath);
     }
+
     private AbilityNames[] generatePart(bool wing, bool armor)
     {
         List<AbilityNames> part = new List<AbilityNames>();
@@ -193,6 +220,7 @@ public class CombatSystem : MonoBehaviour
             part.Add(AbilityNames.Punch);
         return (part.ToArray());
     }
+
     private bool checkProc(float chance)
     {
         float rand = Random.Range(0f, 99f);
@@ -201,23 +229,6 @@ public class CombatSystem : MonoBehaviour
         else
             return true;
     }
+
     #endregion
-
-
-    /*private AbilityNames generatePart(bool wing, bool armor)
-    {
-        List<AbilityNames> random = new List<AbilityNames>();
-
-        if (wing == true) //wings and armor can be spent before call
-            random.Add(AbilityNames.Wings);
-        if (Abilities.IsActive(AbilityNames.Nimbus) == true)
-            random.Add(AbilityNames.Nimbus);
-        if (Abilities.IsActive(AbilityNames.Sword) == true)
-            random.Add(AbilityNames.Sword);
-        if (armor == true)
-            random.Add(AbilityNames.Armor);
-        random.Add(AbilityNames.Punch);
-        int RndGen = Random.Range(0, random.Count - 1);
-        return (random[RndGen]);
-    }*/
 }

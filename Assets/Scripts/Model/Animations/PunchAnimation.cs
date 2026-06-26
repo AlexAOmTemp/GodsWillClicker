@@ -8,7 +8,8 @@ public class PunchAnimation
     private Spine.AnimationState _spineAnimationState;
     private int _track;
 
-    public PunchAnimation(SkeletonGraphic skeletonGraphic, int track, string attackAnimationName, string idleAnimationName)
+    public PunchAnimation(SkeletonGraphic skeletonGraphic, int track, string attackAnimationName,
+        string idleAnimationName)
     {
         _track = track;
         _skeletonGraphic = skeletonGraphic;
@@ -16,13 +17,14 @@ public class PunchAnimation
         _attackAnimationName = attackAnimationName;
         _idleAnimationName = idleAnimationName;
         _spineAnimationState.AddAnimation(_track, _idleAnimationName, true, 0);
-        
     }
+
     public void Play()
     {
         _spineAnimationState.SetAnimation(_track, _attackAnimationName, false);
         _spineAnimationState.AddAnimation(_track, _idleAnimationName, true, 0);
     }
+
     public void Stop()
     {
         _spineAnimationState.ClearTrack(_track);

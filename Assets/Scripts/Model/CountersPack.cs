@@ -12,6 +12,7 @@ public class CountersPack
             _countersPack.Add(abilityName, new CountersSet());
         }
     }
+
     public CountersPack(CountersPack PreviousPack)
     {
         _countersPack = PreviousPack._countersPack;
@@ -21,6 +22,7 @@ public class CountersPack
     {
         _countersPack[abilityName] = countersSet;
     }
+
     public CountersSet GetValue(AbilityNames abilityName)
     {
         CountersSet data = _countersPack[abilityName];
@@ -33,6 +35,7 @@ public class CountersPack
         set.Resource += value;
         SetValue(name, set);
     }
+
     public void IncreaseAddEffectDurationOnActivation(AbilityNames name, int value)
     {
         CountersSet set = GetValue(name);

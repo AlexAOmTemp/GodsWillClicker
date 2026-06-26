@@ -7,6 +7,7 @@ public class RewardGenerator : MonoBehaviour
 
     [SerializeField] private LevelEndPanel _endLevelPanel;
     [SerializeField] private RewardsFiller _rewardFiller;
+    
     private RewardData[] _rewards;
 
     public void generate(int stage)
@@ -18,16 +19,17 @@ public class RewardGenerator : MonoBehaviour
     {
         _endLevelPanel.RewardIsChoosed += onRewardChoose;
     }
+
     private RewardData[] tempRandomGenerator(int stage)
     {
         _rewards = _rewardFiller.GetRewards(stage);
         return _rewards;
     }
+
     private void onRewardChoose(int rewardId)
     {
         Debug.Log($"RewardGenerator: Rewards choosen {rewardId}");
         _rewards[rewardId].InvokeEffect();
         RewardIsChoosen?.Invoke();
     }
-
 }
